@@ -3,15 +3,15 @@ import { BASELINE_SCENARIO_ID } from '@/data/demo/scenarios'
 import { useScenarioStore } from '@/store/scenarios'
 import { Select } from './ui/Controls'
 
-/** Выбор сценария, отображаемого в двойнике и 3D-туре (общий для разделов). */
-export function ScenarioPicker({ className, compact }: { className?: string; compact?: boolean }) {
+/** Выбор сценария, отображаемого в двойнике и 3D-туре (общий для разделов). Подпись — для экранных дикторов. */
+export function ScenarioPicker({ className }: { className?: string }) {
   const id = useId()
   const scenarios = useScenarioStore((s) => s.scenarios)
   const activeId = useScenarioStore((s) => s.activeScenarioId)
   const setActive = useScenarioStore((s) => s.setActiveScenario)
   return (
     <div className={className}>
-      <label htmlFor={id} className={compact ? 'sr-only' : 'mb-1 block text-2xs text-muted max-sm:sr-only'}>
+      <label htmlFor={id} className="sr-only">
         Сценарий
       </label>
       <Select id={id} size="sm" value={activeId} onChange={(e) => setActive(e.target.value)} className="w-full sm:min-w-[200px]">

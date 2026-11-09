@@ -64,12 +64,12 @@ export function StatusIndicator({ status, variant = 'inline', label, className }
     return (
       <span
         className={clsx(
-          'inline-flex h-5 items-center gap-1 rounded-[4px] px-1.5 text-2xs font-medium whitespace-nowrap',
+          'inline-flex h-6 items-center gap-1 rounded-full px-2 text-xs font-medium whitespace-nowrap',
           STATUS_SOFT[status],
           className,
         )}
       >
-        <Icon className="size-3" aria-hidden />
+        <Icon className="size-3.5" aria-hidden />
         {text}
       </span>
     )
@@ -115,15 +115,7 @@ export function Meter({ value, status = 'normal', thresholds = true, className, 
   )
 }
 
+/** Код участка — справочная деталь: приглушённый моноширинный текст без рамки (только в панелях деталей). */
 export function StageCode({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <span
-      className={clsx(
-        'code-tag inline-flex h-[18px] items-center rounded-[3px] border border-line bg-subtle px-1 text-muted',
-        className,
-      )}
-    >
-      {children}
-    </span>
-  )
+  return <span className={clsx('code-tag text-faint', className)}>{children}</span>
 }

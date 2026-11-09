@@ -7,7 +7,7 @@ import { Modal } from '../ui/Dialog'
 
 const field = (invalid: boolean) =>
   clsx(
-    'h-8 w-full rounded-md border bg-surface px-2.5 text-13 outline-none focus:border-accent focus:ring-2 focus:ring-accent-line',
+    'h-9 w-full rounded-lg border bg-surface px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent-line',
     invalid ? 'border-crit' : 'border-line-strong',
   )
 
@@ -59,8 +59,8 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
             ['repeat', 'Повторите новый пароль', repeat, setRepeat, 'new-password', 'repeat'],
           ] as const
         ).map(([key, label, value, setter, auto, errField]) => (
-          <div key={key} className="space-y-1">
-            <label htmlFor={ids[key]} className="text-xs font-medium text-ink-2">
+          <div key={key} className="space-y-1.5">
+            <label htmlFor={ids[key]} className="text-13 font-medium text-ink-2">
               {label}
             </label>
             <input
@@ -78,13 +78,13 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
             />
           </div>
         ))}
-        <p className="text-xs text-muted">Не короче 8 символов, буквы и цифры, без логина.</p>
+        <p className="text-13 text-muted">Не короче 8 символов, буквы и цифры, без логина.</p>
         {error && (
-          <p id={ids.error} role="alert" className="text-xs text-crit">
+          <p id={ids.error} role="alert" className="text-13 text-crit">
             {error.text}
           </p>
         )}
-        <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-line bg-subtle/60 px-5 py-3">
+        <div className="mt-6 flex justify-end gap-2 pb-5">
           <Button variant="secondary" onClick={onClose}>
             Отмена
           </Button>

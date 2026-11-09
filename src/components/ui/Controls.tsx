@@ -32,7 +32,7 @@ export function SegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={label}
-      className={clsx('inline-flex items-center rounded-md border border-line bg-subtle p-0.5', className)}
+      className={clsx('inline-flex items-center rounded-lg bg-subtle p-0.5', className)}
       onKeyDown={(e) => {
         if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return
         const i = options.findIndex((o) => o.value === value)
@@ -53,9 +53,9 @@ export function SegmentedControl<T extends string>({
             title={o.title}
             onClick={() => onChange(o.value)}
             className={clsx(
-              'inline-flex items-center gap-1.5 rounded-[4px] font-medium transition-colors [&_svg]:size-3.5',
-              size === 'sm' ? 'h-6 px-2 text-xs pointer-coarse:h-9 pointer-coarse:px-3' : 'h-7 px-2.5 text-13 pointer-coarse:h-10',
-              active ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(16_24_32/0.08),0_0_0_1px_rgb(16_24_32/0.06)]' : 'text-muted hover:text-ink',
+              'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors [&_svg]:size-4',
+              size === 'sm' ? 'h-7 px-2.5 text-13 pointer-coarse:h-9 pointer-coarse:px-3' : 'h-8 px-3 text-sm pointer-coarse:h-10',
+              active ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(17_17_19/0.08)]' : 'text-muted hover:text-ink',
             )}
           >
             {o.icon}
@@ -78,14 +78,14 @@ export function Select({ className, size = 'md', children, ...rest }: SelectProp
     <div className={clsx('relative inline-flex', className)}>
       <select
         className={clsx(
-          'w-full appearance-none rounded-md border border-line-strong bg-surface pr-7 pl-2.5 font-medium text-ink hover:border-[#c4cad1]',
-          size === 'sm' ? 'h-7 text-xs pointer-coarse:h-10' : 'h-8 text-13 pointer-coarse:h-11',
+          'w-full appearance-none truncate rounded-lg border border-line-strong bg-surface pr-8 pl-3 font-medium text-ink hover:border-faint/60',
+          size === 'sm' ? 'h-8 text-13 pointer-coarse:h-10' : 'h-9 text-sm pointer-coarse:h-11',
         )}
         {...rest}
       >
         {children}
       </select>
-      <ChevronDown className="pointer-events-none absolute top-1/2 right-2 size-3.5 -translate-y-1/2 text-faint" aria-hidden />
+      <ChevronDown className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2 text-faint" aria-hidden />
     </div>
   )
 }
@@ -104,7 +104,6 @@ interface ParamFieldProps {
   onChange: (value: number) => void
   /** Формат значения для подписи «база». */
   format?: (v: number) => string
-  hint?: string
   compact?: boolean
   showSlider?: boolean
 }
@@ -129,7 +128,6 @@ export function ParamField({
   digits = 0,
   onChange,
   format,
-  hint,
   compact,
   showSlider = true,
 }: ParamFieldProps) {
@@ -150,14 +148,14 @@ export function ParamField({
   const fill = ((value - min) / (max - min)) * 100
 
   return (
-    <div className={clsx('min-w-0', compact ? 'space-y-1' : 'space-y-1.5')}>
+    <div className={clsx('min-w-0', compact ? 'space-y-1.5' : 'space-y-2')}>
       <div className="flex items-baseline justify-between gap-2">
-        <label htmlFor={id} className="truncate text-xs text-muted" title={hint}>
+        <label htmlFor={id} className="truncate text-13 text-muted">
           {label}
         </label>
         {changed && baseValue !== undefined && (
-          <span className="tnum shrink-0 text-2xs text-faint">
-            база {format ? format(baseValue) : baseValue.toFixed(digits).replace('.', ',')}
+          <span className="tnum shrink-0 text-xs text-faint">
+            было {format ? format(baseValue) : baseValue.toFixed(digits).replace('.', ',')}
           </span>
         )}
       </div>
@@ -177,20 +175,20 @@ export function ParamField({
         )}
         <div
           className={clsx(
-            'flex h-7 shrink-0 items-center rounded-[5px] border bg-surface pointer-coarse:h-10',
+            'flex h-8 shrink-0 items-center rounded-lg border bg-surface pointer-coarse:h-10',
             changed ? 'border-accent-line bg-accent-soft/50' : 'border-line-strong',
-            showSlider ? 'w-[104px] pointer-coarse:w-[132px]' : 'w-full',
+            showSlider ? 'w-[116px] pointer-coarse:w-[136px]' : 'w-full',
           )}
         >
           <button
             type="button"
-            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
+            className="flex h-full w-7 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
             onClick={() => onChange(clamp(roundToStep(value - step, step), min, max))}
             disabled={value <= min}
             aria-label={`Уменьшить: ${label}`}
             tabIndex={-1}
           >
-            <Minus className="size-3" />
+            <Minus className="size-3.5" />
           </button>
           <input
             id={id}
@@ -213,19 +211,19 @@ export function ParamField({
             aria-describedby={unit ? `${id}-unit` : undefined}
           />
           {unit && (
-            <span id={`${id}-unit`} className="pr-1 text-2xs whitespace-nowrap text-faint">
+            <span id={`${id}-unit`} className="pr-0.5 text-xs whitespace-nowrap text-faint">
               {unit}
             </span>
           )}
           <button
             type="button"
-            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
+            className="flex h-full w-7 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
             onClick={() => onChange(clamp(roundToStep(value + step, step), min, max))}
             disabled={value >= max}
             aria-label={`Увеличить: ${label}`}
             tabIndex={-1}
           >
-            <Plus className="size-3" />
+            <Plus className="size-3.5" />
           </button>
         </div>
       </div>

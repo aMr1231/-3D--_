@@ -30,27 +30,20 @@ export function PerformanceTrend({ history }: { history: HistoryDay[] }) {
   const max = Math.max(...data.map((d) => Math.max(d.output, d.plan)))
   const lo = Math.floor((min - 15) / 10) * 10
   const hi = Math.ceil((max + 5) / 10) * 10
-  const shortfallDays = data.filter((d) => d.attainment < 0.995).length
 
   return (
     <ChartFrame
       title="Динамика выпуска"
-      subtitle={`Годные изделия за сутки · план не выполнен в ${shortfallDays} из ${data.length} дн.`}
       legend={
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <ChartLegend
-            items={[
-              { label: 'Выпуск', color: CHART.primary },
-              { label: 'План при заданной нагрузке', color: CHART.base, shape: 'dash' },
-            ]}
-          />
-          <span className="flex items-center gap-1 text-xs text-muted">
-            <TriangleExclamationPoint className="size-3.5 text-crit" aria-hidden /> событие на линии
-          </span>
-        </div>
+        <ChartLegend
+          items={[
+            { label: 'Выпуск', color: CHART.primary },
+            { label: 'План', color: CHART.base, shape: 'dash' },
+          ]}
+        />
       }
       chart={
-        <div className="h-[248px]">
+        <div className="h-[260px]">
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data} margin={{ top: 8, right: 8, left: -12, bottom: 0 }}>
               <defs>
@@ -79,7 +72,7 @@ export function PerformanceTrend({ history }: { history: HistoryDay[] }) {
                       footer={
                         p.event ? (
                           <span className="flex items-start gap-1 text-crit">
-                            <TriangleExclamationPoint className="mt-px size-3 shrink-0" /> {p.event}
+                            <TriangleExclamationPoint className="mt-px size-3.5 shrink-0" /> {p.event}
                           </span>
                         ) : (
                           `Выполнение плана ${formatPercent(p.attainment, 1)}`

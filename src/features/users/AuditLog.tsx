@@ -57,7 +57,6 @@ export function AuditLog() {
   return (
     <Panel
       title="Журнал действий"
-      subtitle="Входы, регистрации, смена ролей и паролей, удаления — последние 100 записей"
       flush
       actions={
         <Button size="xs" variant="ghost" icon={<RefreshCw />} onClick={() => void load()}>
@@ -68,7 +67,7 @@ export function AuditLog() {
       {error ? (
         <ErrorState title="Журнал недоступен" description={error} />
       ) : !entries ? (
-        <div className="space-y-2 p-4" role="status" aria-label="Загрузка журнала">
+        <div className="space-y-2 px-5 pb-5 md:px-6" role="status" aria-label="Загрузка журнала">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-8" />
           ))}
@@ -76,16 +75,16 @@ export function AuditLog() {
       ) : entries.length === 0 ? (
         <EmptyState icon={<History />} title="Записей пока нет" />
       ) : (
-        <div className="scrollbar-thin max-h-[420px] overflow-auto">
-          <table className="w-full min-w-[560px] text-13">
+        <div className="scrollbar-thin max-h-[440px] overflow-auto pb-2">
+          <table className="w-full min-w-[600px] text-13">
             <caption className="sr-only">Журнал действий</caption>
-            <thead className="sticky top-0 bg-subtle">
+            <thead className="sticky top-0 bg-surface">
               <tr className="border-b border-line text-left text-xs text-muted">
-                <th scope="col" className="px-4 py-2 font-medium">Время</th>
-                <th scope="col" className="px-3 py-2 font-medium">Пользователь</th>
-                <th scope="col" className="px-3 py-2 font-medium">Действие</th>
-                <th scope="col" className="px-3 py-2 font-medium">Объект</th>
-                <th scope="col" className="px-3 py-2 font-medium">IP</th>
+                <th scope="col" className="px-5 py-3 font-medium md:px-6">Время</th>
+                <th scope="col" className="px-3 py-3 font-medium">Пользователь</th>
+                <th scope="col" className="px-3 py-3 font-medium">Действие</th>
+                <th scope="col" className="px-3 py-3 font-medium">Объект</th>
+                <th scope="col" className="px-5 py-3 font-medium md:px-6">IP</th>
               </tr>
             </thead>
             <tbody>
@@ -93,19 +92,19 @@ export function AuditLog() {
                 const meta = ACTIONS[e.action] ?? { label: e.action }
                 return (
                   <tr key={e.id} className="border-b border-line last:border-0">
-                    <td className="tnum px-4 py-2 text-xs whitespace-nowrap text-muted">{formatDateTime(e.at)}</td>
-                    <td className="px-3 py-2 font-mono text-xs text-ink-2">{e.login ?? '—'}</td>
+                    <td className="tnum px-5 py-2.5 whitespace-nowrap text-muted md:px-6">{formatDateTime(e.at)}</td>
+                    <td className="px-3 py-2.5 font-mono text-ink-2">{e.login ?? '—'}</td>
                     <td
                       className={
-                        meta.tone === 'crit' ? 'px-3 py-2 text-xs font-medium text-crit' : meta.tone === 'warn' ? 'px-3 py-2 text-xs font-medium text-warn' : 'px-3 py-2 text-xs text-ink'
+                        meta.tone === 'crit' ? 'px-3 py-2.5 font-medium text-crit' : meta.tone === 'warn' ? 'px-3 py-2.5 font-medium text-warn' : 'px-3 py-2.5 text-ink'
                       }
                     >
                       {meta.label}
                     </td>
-                    <td className="max-w-[220px] truncate px-3 py-2 text-xs text-muted" title={e.subject ?? undefined}>
+                    <td className="max-w-[220px] truncate px-3 py-2.5 text-muted" title={e.subject ?? undefined}>
                       {e.subject ?? '—'}
                     </td>
-                    <td className="tnum px-3 py-2 font-mono text-2xs text-faint">{e.ip ?? '—'}</td>
+                    <td className="tnum px-5 py-2.5 font-mono text-faint md:px-6">{e.ip ?? '—'}</td>
                   </tr>
                 )
               })}

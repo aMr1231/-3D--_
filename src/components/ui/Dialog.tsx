@@ -37,25 +37,25 @@ export function Modal({ open, onClose, title, description, children, footer, wid
         if (e.target === ref.current) onClose()
       }}
       className={clsx(
-        'm-auto w-[calc(100vw-32px)] rounded-lg border border-line bg-surface p-0 text-ink shadow-[0_16px_48px_rgb(16_24_32/0.18)] open:animate-fade-in',
+        'm-auto w-[calc(100vw-32px)] rounded-xl border border-line bg-surface p-0 text-ink shadow-overlay open:animate-fade-in',
         width === 'sm' ? 'max-w-[420px]' : 'max-w-[560px]',
       )}
     >
       {open && (
         <div className="flex flex-col">
-          <div className="flex items-start justify-between gap-4 px-5 pt-4">
-            <div className="space-y-1">
-              <h2 id={titleId} className="text-[15px] font-semibold">
+          <div className="flex items-start justify-between gap-4 px-6 pt-5">
+            <div className="space-y-1.5">
+              <h2 id={titleId} className="text-15 font-semibold">
                 {title}
               </h2>
-              {description && <div className="text-13 text-muted">{description}</div>}
+              {description && <div className="text-sm text-muted">{description}</div>}
             </div>
             <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Закрыть">
               <X />
             </Button>
           </div>
-          {children && <div className="px-5 pt-4">{children}</div>}
-          {footer && <div className="mt-5 flex justify-end gap-2 border-t border-line bg-subtle/60 px-5 py-3">{footer}</div>}
+          {children && <div className="px-6 pt-4">{children}</div>}
+          {footer && <div className="mt-6 flex justify-end gap-2 px-6 pb-5">{footer}</div>}
         </div>
       )}
     </dialog>
@@ -135,8 +135,8 @@ export function NameDialog({ open, title, submitLabel, initialName, initialDescr
   return (
     <Modal open={open} onClose={onCancel} title={title} width="sm">
       <form onSubmit={submit} className="space-y-3" noValidate>
-        <div className="space-y-1">
-          <label htmlFor={nameId} className="text-xs font-medium text-ink-2">
+        <div className="space-y-1.5">
+          <label htmlFor={nameId} className="text-13 font-medium text-ink-2">
             Название
           </label>
           <input
@@ -151,18 +151,18 @@ export function NameDialog({ open, title, submitLabel, initialName, initialDescr
             aria-invalid={!!error}
             aria-describedby={error ? `${nameId}-err` : undefined}
             className={clsx(
-              'h-8 w-full rounded-md border bg-surface px-2.5 text-13 outline-none focus:border-accent focus:ring-2 focus:ring-accent-line',
+              'h-9 w-full rounded-lg border bg-surface px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent-line',
               error ? 'border-crit' : 'border-line-strong',
             )}
           />
           {error && (
-            <p id={`${nameId}-err`} className="text-xs text-crit">
+            <p id={`${nameId}-err`} className="text-13 text-crit">
               {error}
             </p>
           )}
         </div>
-        <div className="space-y-1">
-          <label htmlFor={descId} className="text-xs font-medium text-ink-2">
+        <div className="space-y-1.5">
+          <label htmlFor={descId} className="text-13 font-medium text-ink-2">
             Описание <span className="font-normal text-faint">— необязательно</span>
           </label>
           <textarea
@@ -171,10 +171,10 @@ export function NameDialog({ open, title, submitLabel, initialName, initialDescr
             rows={2}
             maxLength={240}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full resize-none rounded-md border border-line-strong bg-surface px-2.5 py-1.5 text-13 outline-none focus:border-accent focus:ring-2 focus:ring-accent-line"
+            className="w-full resize-none rounded-lg border border-line-strong bg-surface px-3 py-2 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent-line"
           />
         </div>
-        <div className="-mx-5 mt-5 flex justify-end gap-2 border-t border-line bg-subtle/60 px-5 py-3">
+        <div className="mt-6 flex justify-end gap-2 pb-5">
           <Button variant="secondary" onClick={onCancel}>
             Отмена
           </Button>

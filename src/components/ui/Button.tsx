@@ -10,19 +10,19 @@ const base =
   'inline-flex items-center justify-center gap-1.5 whitespace-nowrap font-medium transition-colors duration-150 select-none disabled:opacity-50 disabled:pointer-events-none [&_svg]:shrink-0'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-accent text-white hover:bg-accent-hover shadow-[inset_0_-1px_0_rgb(0_0_0/0.12)]',
-  secondary: 'bg-surface text-ink border border-line-strong hover:bg-subtle hover:border-[#c4cad1]',
+  primary: 'bg-accent text-white hover:bg-accent-hover',
+  secondary: 'bg-surface text-ink border border-line-strong hover:bg-subtle',
   ghost: 'text-ink-2 hover:bg-subtle hover:text-ink',
   quiet: 'text-accent hover:text-accent-hover hover:bg-accent-soft',
   danger: 'bg-surface text-crit border border-line-strong hover:bg-crit-soft hover:border-crit/40',
 }
 
 const sizes: Record<ButtonSize, string> = {
-  xs: 'h-6 px-2 text-xs rounded-[4px] [&_svg]:size-3.5 pointer-coarse:h-9 pointer-coarse:px-3',
-  sm: 'h-7 px-2.5 text-13 rounded-[5px] [&_svg]:size-3.5 pointer-coarse:h-10',
-  md: 'h-8 px-3 text-13 rounded-md [&_svg]:size-4 pointer-coarse:h-11',
-  icon: 'size-8 rounded-md [&_svg]:size-4 pointer-coarse:size-11',
-  'icon-sm': 'size-7 rounded-[5px] [&_svg]:size-3.5 pointer-coarse:size-10',
+  xs: 'h-7 px-2.5 text-13 rounded-lg [&_svg]:size-3.5 pointer-coarse:h-9 pointer-coarse:px-3',
+  sm: 'h-8 px-3 text-13 rounded-lg [&_svg]:size-4 pointer-coarse:h-10',
+  md: 'h-9 px-3.5 text-sm rounded-lg [&_svg]:size-4 pointer-coarse:h-11',
+  icon: 'size-9 rounded-lg [&_svg]:size-[18px] pointer-coarse:size-11',
+  'icon-sm': 'size-8 rounded-lg [&_svg]:size-4 pointer-coarse:size-10',
 }
 
 export function buttonClass(variant: ButtonVariant = 'secondary', size: ButtonSize = 'md', className?: string) {

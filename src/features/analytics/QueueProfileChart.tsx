@@ -12,17 +12,11 @@ export function QueueProfileChart({ result, highlight }: { result: SimulationRes
   const data = queueProfile(result, 1)
   // Показываем участки с заметной очередью; цвет закреплён за участком.
   const visible = STAGES.filter((s) => Math.max(...data.map((p) => p[s.id])) >= 0.5)
-  const growing = result.stages.filter((s) => s.backlogGrowthPerHour > 0)
 
   return (
     <ChartFrame
       title="Накопление очередей в течение суток"
-      subtitle={
-        growing.length
-          ? `Перегрузка: задел растёт перед ${growing.map((g) => STAGES.find((s) => s.id === g.stageId)!.code).join(', ')} — к концу суток ${formatNumber(growing.reduce((a, g) => a + g.steadyQueueLength + g.backlogGrowthPerHour * result.params.hoursPerDay, 0), 0)} шт`
-          : 'Очереди стабильны: поступление не превышает мощность ни на одном участке'
-      }
-      legend={<ChartLegend items={visible.map((s) => ({ label: `${s.code} ${s.shortName}`, color: STAGE_COLORS[s.id] }))} />}
+      legend={<ChartLegend items={visible.map((s) => ({ label: s.shortName, color: STAGE_COLORS[s.id] }))} />}
       chart={
         <div className="h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
@@ -39,7 +33,7 @@ export function QueueProfileChart({ result, highlight }: { result: SimulationRes
                   return (
                     <ChartTooltipBox
                       title={`${p.hour} ч от начала суток`}
-                      rows={visible.map((s) => ({ key: s.id, label: `${s.code} ${s.shortName}`, value: `${formatNumber(p[s.id], 1)} шт`, color: STAGE_COLORS[s.id] }))}
+                      rows={visible.map((s) => ({ key: s.id, label: s.shortName, value: `${formatNumber(p[s.id], 1)} шт`, color: STAGE_COLORS[s.id] }))}
                     />
                   )
                 }}

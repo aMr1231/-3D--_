@@ -26,7 +26,7 @@ export function RouteError() {
                 ? 'Проверьте соединение с сервером разработки и обновите страницу.'
                 : 'Остальные разделы продолжают работать. Попробуйте открыть раздел заново.'}
             </p>
-            <p className="mt-2 font-mono text-2xs break-all text-faint">{message}</p>
+            <p className="mt-2 font-mono text-xs break-all text-faint">{message}</p>
           </>
         }
         actions={

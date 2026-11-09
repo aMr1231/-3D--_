@@ -3,6 +3,7 @@ import { Outlet, useNavigation } from 'react-router'
 import { useAuthStore } from '@/store/auth'
 import { useRealtimeConnection } from '@/store/realtime'
 import { useScenarioStore } from '@/store/scenarios'
+import { InfoDrawer } from '../info/InfoDrawer'
 import { Toaster } from '../ui/Toaster'
 import { MobileTabBar } from './MobileTabBar'
 import { NAV_ITEMS } from './nav'
@@ -29,7 +30,7 @@ export function AppShell() {
     <div className="flex h-dvh overflow-hidden" style={{ '--tabbar-h': hasTabBar ? '56px' : '0px' } as CSSProperties}>
       <a
         href="#main"
-        className="sr-only z-[70] rounded-md bg-accent px-3 py-2 text-13 text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        className="sr-only z-[70] rounded-lg bg-accent px-3 py-2 text-sm text-white focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
       >
         Перейти к содержимому
       </a>
@@ -37,7 +38,7 @@ export function AppShell() {
       <div className="relative flex min-w-0 flex-1 flex-col">
         <Topbar />
         {navigation.state === 'loading' && (
-          <div className="absolute inset-x-0 top-12 z-40 h-0.5 overflow-hidden bg-accent-soft" role="progressbar" aria-label="Загрузка раздела">
+          <div className="absolute inset-x-0 top-14 z-40 h-0.5 overflow-hidden bg-accent-soft" role="progressbar" aria-label="Загрузка раздела">
             <div className="h-full w-1/3 animate-progress bg-accent" />
           </div>
         )}
@@ -50,6 +51,7 @@ export function AppShell() {
         </main>
       </div>
       <MobileTabBar />
+      <InfoDrawer />
       <Toaster />
     </div>
   )

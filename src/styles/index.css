@@ -4,26 +4,39 @@
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Consolas, monospace;
 
-  --text-2xs: 0.6875rem;
-  --text-2xs--line-height: 1rem;
+  /*
+   * Шкала текста. Минимум 12 px (text-xs) — только для чипов, осей графиков и шапок таблиц;
+   * вторичный текст — 13 px, основной — 14 px. Мельче 12 px в интерфейсе ничего нет.
+   */
   --text-13: 0.8125rem;
   --text-13--line-height: 1.25rem;
+  --text-15: 0.9375rem;
+  --text-15--line-height: 1.375rem;
+  --text-title: 1.5rem;
+  --text-title--line-height: 2rem;
+  --text-title--letter-spacing: -0.018em;
+  --text-kpi: 1.75rem;
+  --text-kpi--line-height: 2rem;
+  --text-kpi--letter-spacing: -0.025em;
+  --text-display: 2.75rem;
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.035em;
 
-  /* Поверхности */
-  --color-canvas: #f4f5f6;
+  /* Поверхности: спокойная нейтральная гамма */
+  --color-canvas: #f7f7f8;
   --color-surface: #ffffff;
-  --color-subtle: #f1f3f4;
-  --color-sunken: #eceef0;
-  --color-line: #e3e6ea;
-  --color-line-strong: #d1d6dc;
+  --color-subtle: #f4f4f6;
+  --color-sunken: #ececf0;
+  --color-line: #e9e9ec;
+  --color-line-strong: #d9d9de;
 
   /* Текст */
-  --color-ink: #15181c;
-  --color-ink-2: #383e46;
-  --color-muted: #5f6670;
-  --color-faint: #8a919a;
+  --color-ink: #111113;
+  --color-ink-2: #3a3a40;
+  --color-muted: #6b6b73;
+  --color-faint: #8b8b94;
 
-  /* Навигация (графит) */
+  /* Графит — только для витрины страницы входа */
   --color-graphite: #14171a;
   --color-graphite-2: #1c2024;
   --color-graphite-3: #292e33;
@@ -52,7 +65,8 @@
   --color-data-1: #1b7fa6;
   --color-data-base: #a3abb5;
 
-  --radius-xs: 3px;
+  /* Тень — только у оверлеев: поповер, справка, диалог, боковая панель, уведомление */
+  --shadow-overlay: 0 16px 40px -12px rgb(17 17 19 / 0.16), 0 2px 6px -2px rgb(17 17 19 / 0.06);
 
   --animate-fade-in: fade-in 160ms ease-out;
   --animate-slide-in-right: slide-in-right 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -107,8 +121,13 @@
   body {
     @apply bg-canvas text-ink font-sans antialiased;
     font-size: 14px;
-    line-height: 1.45;
+    line-height: 1.5;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.01em;
   }
   ::selection {
     background: var(--color-accent-line);
@@ -143,11 +162,8 @@
   .tnum {
     font-variant-numeric: tabular-nums;
   }
-  .label-caps {
-    @apply text-2xs text-faint font-medium tracking-[0.06em] uppercase;
-  }
   .code-tag {
-    @apply font-mono text-[11px] font-medium tracking-tight;
+    @apply font-mono text-xs font-medium tracking-tight;
   }
   .scrollbar-thin {
     scrollbar-width: thin;
@@ -184,17 +200,17 @@
   }
   .range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px;
-    height: 14px;
-    margin-top: -5px;
+    width: 16px;
+    height: 16px;
+    margin-top: -6px;
     border-radius: 50%;
     background: var(--color-surface);
     border: 2px solid var(--color-accent);
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
   }
   .range::-moz-range-thumb {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--color-surface);
     border: 2px solid var(--color-accent);
@@ -207,9 +223,9 @@
   }
   /* Техническая сетка холста мнемосхемы */
   .tech-grid {
-    background-color: #f7f8f9;
-    background-image: radial-gradient(circle at 1px 1px, #d5dae0 1px, transparent 0);
-    background-size: 20px 20px;
+    background-color: var(--color-canvas);
+    background-image: radial-gradient(circle at 1px 1px, #dedee3 1px, transparent 0);
+    background-size: 24px 24px;
   }
 }
 
@@ -231,13 +247,13 @@
 .react-flow__controls {
   box-shadow: none !important;
   border: 1px solid var(--color-line);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
 }
 .react-flow__controls-button {
   border-bottom: 1px solid var(--color-line) !important;
-  width: 28px !important;
-  height: 28px !important;
+  width: 32px !important;
+  height: 32px !important;
 }
 .react-flow__controls-button:last-child {
   border-bottom: 0 !important;

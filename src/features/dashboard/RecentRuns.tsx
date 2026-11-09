@@ -1,4 +1,4 @@
-import { History, SlidersHorizontal } from 'lucide-react'
+import { History } from 'lucide-react'
 import { Link } from 'react-router'
 import { ButtonLink } from '@/components/ui/Button'
 import { Delta } from '@/components/ui/Delta'
@@ -16,11 +16,10 @@ export function RecentRuns() {
 
   return (
     <Panel
-      title="Последние расчёты сценариев"
-      subtitle="Изменение к базовому режиму"
+      title="Последние расчёты"
       flush
       actions={
-        <ButtonLink to="/scenarios" size="xs" variant="ghost" icon={<SlidersHorizontal />}>
+        <ButtonLink to="/scenarios" size="xs" variant="ghost">
           Все сценарии
         </ButtonLink>
       }
@@ -29,7 +28,7 @@ export function RecentRuns() {
         <EmptyState
           icon={<History />}
           title="Расчётов пока нет"
-          description="Измените параметры линии в разделе «Сценарии» и запустите расчёт — результат появится здесь."
+          description="Запустите расчёт в разделе «Сценарии» — результат появится здесь."
           action={
             <ButtonLink to="/scenarios" variant="primary" size="sm">
               Открыть сценарии
@@ -37,41 +36,45 @@ export function RecentRuns() {
           }
         />
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="px-2 pb-2">
           {recent.map((run) => {
             const exists = scenarios.some((s) => s.id === run.scenarioId)
             const deltas = compareSummaries(run.baselineSummary, run.summary, ['cycleTimeMin', 'outputPerDay', 'costPerUnit'])
             const content = (
               <>
                 <div className="flex items-baseline justify-between gap-3">
-                  <span className="truncate text-13 font-medium text-ink">{run.scenarioName}</span>
-                  <span className="shrink-0 text-2xs text-faint">{formatRelative(run.ranAt)}</span>
+                  <span className="truncate text-sm font-medium text-ink">{run.scenarioName}</span>
+                  <span className="shrink-0 text-13 text-faint">
+                    {formatRelative(run.ranAt)}
+                    {!exists && ' · удалён'}
+                  </span>
                 </div>
-                <dl className="mt-1.5 grid grid-cols-3 gap-2 text-2xs text-muted">
+                <dl className="mt-2 grid grid-cols-3 gap-3 text-13 text-muted">
                   {[
                     ['Цикл', deltas[0]],
                     ['Выпуск', deltas[1]],
                     ['Себест.', deltas[2]],
                   ].map(([label, d]) => (
-                    <div key={label as string}>
+                    <div key={label as string} className="min-w-0">
                       <dt>{label as string}</dt>
-                      <dd>
+                      <dd className="mt-0.5">
                         <Delta delta={d as (typeof deltas)[number]} showAbsolute={false} />
                       </dd>
                     </div>
                   ))}
                 </dl>
-                {!exists && <p className="mt-1 text-2xs text-faint">Сценарий удалён</p>}
               </>
             )
             return (
               <li key={run.id}>
                 {exists ? (
-                  <Link to={`/scenarios?id=${run.scenarioId}`} className="block px-4 py-3 hover:bg-subtle/60">
+                  <Link to={`/scenarios?id=${run.scenarioId}`} className="block rounded-lg px-3 py-3 hover:bg-subtle">
                     {content}
                   </Link>
                 ) : (
-                  <div className="px-4 py-3 opacity-70">{content}</div>
+                  <div className="px-3 py-3 opacity-60">
+                    {content}
+                  </div>
                 )}
               </li>
             )

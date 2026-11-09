@@ -18,11 +18,11 @@ interface ChartTooltipBoxProps {
 /** Подсказка графика: значение ведёт, подпись вторична; ключ серии — короткий штрих её цвета. */
 export function ChartTooltipBox({ title, rows, footer }: ChartTooltipBoxProps) {
   return (
-    <div className="min-w-[180px] rounded-md border border-line bg-surface px-3 py-2 shadow-[0_8px_24px_rgb(16_24_32/0.12)]">
-      <p className="mb-1.5 text-xs font-medium text-muted">{title}</p>
+    <div className="min-w-[188px] rounded-lg border border-line bg-surface px-3 py-2.5 shadow-overlay">
+      <p className="mb-1.5 text-13 font-medium text-muted">{title}</p>
       <ul className="space-y-1">
         {rows.map((r) => (
-          <li key={r.key} className="flex items-center gap-2 text-xs">
+          <li key={r.key} className="flex items-center gap-2 text-13">
             <span
               className={r.shape === 'rect' ? 'size-2 rounded-[2px]' : 'h-0.5 w-3 rounded-full'}
               style={{ backgroundColor: r.color }}
@@ -33,7 +33,7 @@ export function ChartTooltipBox({ title, rows, footer }: ChartTooltipBoxProps) {
           </li>
         ))}
       </ul>
-      {footer && <div className="mt-2 border-t border-line pt-1.5 text-2xs text-muted">{footer}</div>}
+      {footer && <div className="mt-2 border-t border-line pt-2 text-xs text-muted">{footer}</div>}
     </div>
   )
 }
@@ -47,7 +47,7 @@ export interface RechartsTooltipProps<T> {
 
 export function ChartLegend({ items }: { items: { label: string; color: string; shape?: 'line' | 'rect' | 'dash' }[] }) {
   return (
-    <ul className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+    <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 text-13 text-muted">
       {items.map((i) => (
         <li key={i.label} className="flex items-center gap-1.5">
           {i.shape === 'rect' ? (

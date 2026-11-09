@@ -5,7 +5,6 @@ import { Panel } from '../ui/Panel'
 
 interface ChartFrameProps {
   title: ReactNode
-  subtitle?: ReactNode
   legend?: ReactNode
   actions?: ReactNode
   chart: ReactNode
@@ -16,13 +15,12 @@ interface ChartFrameProps {
 }
 
 /** Панель графика с переключателем «график / таблица». */
-export function ChartFrame({ title, subtitle, legend, actions, chart, table, className, id }: ChartFrameProps) {
+export function ChartFrame({ title, legend, actions, chart, table, className, id }: ChartFrameProps) {
   const [view, setView] = useState<'chart' | 'table'>('chart')
   return (
     <Panel
       id={id}
       title={title}
-      subtitle={subtitle}
       className={className}
       actions={
         <>
@@ -32,20 +30,20 @@ export function ChartFrame({ title, subtitle, legend, actions, chart, table, cla
             value={view}
             onChange={setView}
             options={[
-              { value: 'chart', label: <span className="sr-only sm:not-sr-only">График</span>, icon: <ChartColumn />, title: 'График' },
-              { value: 'table', label: <span className="sr-only sm:not-sr-only">Таблица</span>, icon: <Table />, title: 'Таблица' },
+              { value: 'chart', label: <span className="sr-only">График</span>, icon: <ChartColumn />, title: 'График' },
+              { value: 'table', label: <span className="sr-only">Таблица</span>, icon: <Table />, title: 'Таблица' },
             ]}
           />
         </>
       }
     >
       {view === 'chart' ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {legend}
           {chart}
         </div>
       ) : (
-        <div className="scrollbar-thin -mx-4 -my-4 max-h-[340px] overflow-auto">{table}</div>
+        <div className="scrollbar-thin -mx-5 -mb-5 max-h-[360px] overflow-auto md:-mx-6 md:-mb-6">{table}</div>
       )}
     </Panel>
   )
@@ -64,13 +62,13 @@ export function DataTable({
   return (
     <table className="w-full text-13">
       <caption className="sr-only">{caption}</caption>
-      <thead className="sticky top-0 bg-subtle">
+      <thead className="sticky top-0 bg-surface">
         <tr>
           {columns.map((c) => (
             <th
               key={c.key}
               scope="col"
-              className={`border-b border-line px-4 py-2 text-xs font-medium whitespace-nowrap text-muted ${c.align === 'right' ? 'text-right' : 'text-left'}`}
+              className={`border-b border-line px-5 py-2.5 text-xs font-medium whitespace-nowrap text-muted md:px-6 ${c.align === 'right' ? 'text-right' : 'text-left'}`}
             >
               {c.label}
             </th>
@@ -81,7 +79,7 @@ export function DataTable({
         {rows.map((r, i) => (
           <tr key={i} className="border-b border-line last:border-0">
             {columns.map((c) => (
-              <td key={c.key} className={`tnum px-4 py-1.5 whitespace-nowrap ${c.align === 'right' ? 'text-right' : 'text-left'}`}>
+              <td key={c.key} className={`tnum px-5 py-2 whitespace-nowrap md:px-6 ${c.align === 'right' ? 'text-right' : 'text-left'}`}>
                 {r[c.key]}
               </td>
             ))}

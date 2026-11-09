@@ -4,14 +4,15 @@ import { Button } from '@/components/ui/Button'
 import { Select } from '@/components/ui/Controls'
 import { ConfirmDialog } from '@/components/ui/Dialog'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/Feedback'
-import { PageHeader, Panel } from '@/components/ui/Panel'
+import { Page, PageHeader, Panel } from '@/components/ui/Panel'
 import { formatDateTime } from '@/domain/format'
-import { ROLE_ACCESS, ROLE_LABEL, type Role } from '@/domain/types'
+import { ROLE_LABEL, type Role } from '@/domain/types'
 import { ApiError, api } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
 import { useRealtimeStore } from '@/store/realtime'
 import { toast } from '@/store/toast'
 import { AuditLog } from './AuditLog'
+import { UsersInfo } from './UsersInfo'
 
 interface UserListItem {
   id: number
@@ -79,10 +80,9 @@ export default function UsersPage() {
   const managers = users?.filter((u) => u.role === 'manager').length ?? 0
 
   return (
-    <div className="mx-auto max-w-[1080px] space-y-4 p-4 md:p-6">
+    <Page width="narrow">
       <PageHeader
         title="Пользователи"
-        description="Новые пользователи регистрируются сами и получают роль «Гость экскурсии». Здесь руководитель выдаёт полный доступ или удаляет учётные записи."
         actions={
           <Button variant="secondary" icon={<RefreshCw />} onClick={() => void load()}>
             Обновить
@@ -91,8 +91,12 @@ export default function UsersPage() {
       />
 
       <Panel
-        title="Учётные записи"
-        subtitle={users ? `${users.length} всего · руководителей: ${managers}` : undefined}
+        title={
+          <>
+            Учётные записи
+            {users && <span className="tnum ml-2 font-normal text-faint">{users.length}</span>}
+          </>
+        }
         flush
       >
         {error ? (
@@ -106,7 +110,7 @@ export default function UsersPage() {
             }
           />
         ) : !users ? (
-          <div className="space-y-2 p-4" role="status" aria-label="Загрузка пользователей">
+          <div className="space-y-2 px-5 pb-5 md:px-6" role="status" aria-label="Загрузка пользователей">
             {[0, 1, 2].map((i) => (
               <Skeleton key={i} className="h-10" />
             ))}
@@ -114,16 +118,15 @@ export default function UsersPage() {
         ) : users.length === 0 ? (
           <EmptyState icon={<Users />} title="Пользователей нет" />
         ) : (
-          <div className="scrollbar-thin overflow-x-auto">
-            <table className="w-full min-w-[560px] text-13">
+          <div className="scrollbar-thin overflow-x-auto pb-2">
+            <table className="w-full min-w-[560px] text-sm">
               <caption className="sr-only">Пользователи системы</caption>
               <thead>
-                <tr className="border-b border-line bg-subtle/70 text-left text-xs text-muted">
-                  <th scope="col" className="px-4 py-2 font-medium">Логин</th>
-                  <th scope="col" className="px-3 py-2 font-medium">Роль</th>
-                  <th scope="col" className="px-3 py-2 font-medium">Доступ</th>
-                  <th scope="col" className="px-3 py-2 font-medium">Зарегистрирован</th>
-                  <th scope="col" className="px-3 py-2"><span className="sr-only">Действия</span></th>
+                <tr className="border-b border-line text-left text-xs text-muted">
+                  <th scope="col" className="px-5 py-3 font-medium md:px-6">Логин</th>
+                  <th scope="col" className="px-3 py-3 font-medium">Роль</th>
+                  <th scope="col" className="px-3 py-3 font-medium">Зарегистрирован</th>
+                  <th scope="col" className="px-5 py-3 md:px-6"><span className="sr-only">Действия</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -131,14 +134,18 @@ export default function UsersPage() {
                   const self = u.id === me?.id
                   return (
                     <tr key={u.id} className="border-b border-line last:border-0">
-                      <th scope="row" className="px-4 py-2.5 text-left font-medium text-ink">
-                        <span className="font-mono text-13">{u.login}</span>
-                        {self && <span className="ml-2 rounded-[3px] bg-accent-soft px-1.5 py-px text-2xs font-normal text-accent">вы</span>}
-                        {online.some((m) => m.id === u.id) && (
-                          <span className="ml-2 inline-flex items-center gap-1 text-2xs font-normal text-ok">
-                            <span className="size-1.5 rounded-full bg-ok" aria-hidden />в сети
-                          </span>
-                        )}
+                      <th scope="row" className="px-5 py-3 text-left font-medium text-ink md:px-6">
+                        <span className="inline-flex items-center gap-2">
+                          {online.some((m) => m.id === u.id) ? (
+                            <span className="size-2 shrink-0 rounded-full bg-ok" title="В сети">
+                              <span className="sr-only">В сети.</span>
+                            </span>
+                          ) : (
+                            <span className="size-2 shrink-0" aria-hidden />
+                          )}
+                          <span className="font-mono">{u.login}</span>
+                          {self && <span className="rounded-full bg-accent-soft px-2 py-0.5 text-xs font-medium text-accent">вы</span>}
+                        </span>
                       </th>
                       <td className="px-3 py-2">
                         <Select
@@ -154,9 +161,8 @@ export default function UsersPage() {
                           <option value="guest">{ROLE_LABEL.guest}</option>
                         </Select>
                       </td>
-                      <td className="px-3 py-2.5 text-xs text-muted">{ROLE_ACCESS[u.role]}</td>
-                      <td className="tnum px-3 py-2.5 text-xs text-muted">{formatDateTime(u.createdAt)}</td>
-                      <td className="px-3 py-2 text-right">
+                      <td className="tnum px-3 py-3 text-13 text-muted">{formatDateTime(u.createdAt)}</td>
+                      <td className="px-5 py-2 text-right md:px-6">
                         <Button
                           size="xs"
                           variant="ghost"
@@ -178,10 +184,6 @@ export default function UsersPage() {
         )}
       </Panel>
 
-      <p className="text-xs text-muted">
-        Хранятся только логин, хеш пароля, роль и дата регистрации. Смена роли и удаление действуют сразу — без повторного входа.
-      </p>
-
       <AuditLog />
 
       <ConfirmDialog
@@ -193,6 +195,7 @@ export default function UsersPage() {
         onCancel={() => setToDelete(null)}
         onConfirm={() => toDelete && void remove(toDelete)}
       />
-    </div>
+      <UsersInfo total={users?.length ?? null} managers={managers} />
+    </Page>
   )
 }

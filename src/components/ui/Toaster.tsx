@@ -19,12 +19,12 @@ export function Toaster() {
         return (
           <div
             key={t.id}
-            className="pointer-events-auto flex w-full max-w-[380px] animate-slide-in-up items-start gap-2.5 rounded-lg border border-line bg-surface px-3 py-2.5 shadow-[0_8px_24px_rgb(16_24_32/0.12)]"
+            className="pointer-events-auto flex w-full max-w-[380px] animate-slide-in-up items-start gap-2.5 rounded-xl border border-line bg-surface px-4 py-3 shadow-overlay"
           >
             <Icon className={clsx('mt-0.5 size-4 shrink-0', ICON_CLASS[t.tone])} aria-hidden />
             <div className="min-w-0 flex-1">
-              <p className="text-13 font-medium text-ink">{t.title}</p>
-              {t.description && <p className="mt-0.5 text-xs text-muted">{t.description}</p>}
+              <p className="text-sm font-medium text-ink">{t.title}</p>
+              {t.description && <p className="mt-0.5 text-13 text-muted">{t.description}</p>}
             </div>
             <button
               type="button"

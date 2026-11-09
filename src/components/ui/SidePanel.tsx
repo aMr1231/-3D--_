@@ -78,9 +78,9 @@ export function SidePanel({ open, onClose, title, eyebrow, headerExtra, children
     <aside
       aria-label={label}
       className={clsx(
-        'z-20 flex flex-col overflow-hidden border border-line bg-surface shadow-[0_12px_32px_rgb(16_24_32/0.14)]',
-        'fixed inset-x-0 bottom-[calc(var(--tabbar-h,56px)+env(safe-area-inset-bottom))] animate-slide-in-up rounded-t-xl',
-        'md:absolute md:inset-x-auto md:top-3 md:right-3 md:bottom-3 md:w-[360px] md:animate-slide-in-right md:rounded-lg',
+        'z-20 flex flex-col overflow-hidden border border-line bg-surface shadow-overlay',
+        'fixed inset-x-0 bottom-[calc(var(--tabbar-h,56px)+env(safe-area-inset-bottom))] animate-slide-in-up rounded-t-2xl',
+        'md:absolute md:inset-x-auto md:top-4 md:right-4 md:bottom-4 md:w-[380px] md:animate-slide-in-right md:rounded-xl',
         className,
       )}
       style={
@@ -119,10 +119,10 @@ export function SidePanel({ open, onClose, title, eyebrow, headerExtra, children
           <span className="h-1 w-10 rounded-full bg-line-strong" aria-hidden />
         </button>
       )}
-      <header className="flex items-start justify-between gap-3 border-b border-line px-4 pt-1 pb-3 md:pt-3">
-        <div className="min-w-0 space-y-1">
-          {eyebrow && <div className="flex flex-wrap items-center gap-1.5">{eyebrow}</div>}
-          <h2 className="text-[15px] leading-snug font-semibold text-ink">{title}</h2>
+      <header className="flex items-start justify-between gap-3 px-5 pt-1 pb-2 md:pt-5">
+        <div className="min-w-0 space-y-1.5">
+          {eyebrow && <div className="flex flex-wrap items-center gap-2">{eyebrow}</div>}
+          <h2 className="text-lg leading-snug font-semibold text-ink">{title}</h2>
           {headerExtra}
         </div>
         <Button variant="ghost" size="icon-sm" onClick={onClose} aria-label="Закрыть панель" className="-mr-1.5">
@@ -154,7 +154,7 @@ export function SidePanel({ open, onClose, title, eyebrow, headerExtra, children
       >
         {children}
       </div>
-      {footer && <footer className="border-t border-line bg-subtle/60 px-4 py-3">{footer}</footer>}
+      {footer && <footer className="border-t border-line px-5 py-4">{footer}</footer>}
     </aside>
   )
 }

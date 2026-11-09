@@ -55,13 +55,13 @@ export function FlowEdge({ id, sourceX, sourceY, targetX, targetY, sourcePositio
           className="nodrag nopan pointer-events-none absolute flex flex-col items-center gap-0.5"
           style={{ transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)` }}
         >
-          <span className="tnum rounded-[4px] border border-line bg-surface px-1.5 py-px text-2xs font-medium text-ink-2">
+          <span className="tnum rounded-full border border-line bg-surface px-2 py-0.5 text-xs font-medium text-ink-2">
             {formatNumber(data?.flowPerHour ?? 0, data?.scrap ? 2 : 1)} шт/ч
           </span>
           {!data?.scrap && (queue >= 3 || hot || warm) && queue >= 1 && (
             <span
               className={clsx(
-                'tnum rounded-[4px] px-1.5 py-px text-2xs font-medium',
+                'tnum rounded-full px-2 py-0.5 text-xs font-medium',
                 hot ? 'bg-crit-soft text-crit' : warm ? 'bg-warn-soft text-warn' : 'bg-subtle text-muted',
               )}
             >

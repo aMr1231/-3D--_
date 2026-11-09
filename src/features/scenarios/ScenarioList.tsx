@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { Lock, Plus, RotateCcw } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Delta } from '@/components/ui/Delta'
+import { OverflowMenu } from '@/components/ui/Menu'
 import { compareMetric } from '@/domain/metrics'
 import { summarize } from '@/domain/simulation/engine'
 import type { Scenario } from '@/domain/types'
@@ -16,8 +17,6 @@ interface ScenarioListProps {
   onReset: () => void
 }
 
-const KIND_LABEL = { baseline: 'База', preset: 'Демо', user: 'Мой' } as const
-
 export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate, onReset }: ScenarioListProps) {
   const base = summarize(BASELINE_RESULT)
   const groups: { title: string; items: Scenario[] }[] = [
@@ -28,20 +27,24 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center justify-between gap-2 border-b border-line px-3 py-2.5">
-        <h2 className="text-13 font-semibold text-ink">Сценарии</h2>
-        <Button size="xs" variant="secondary" icon={<Plus />} onClick={onCreate}>
-          Новый
-        </Button>
+      <div className="flex items-center justify-between gap-2 px-4 pt-5 pb-3">
+        <h2 className="text-15 font-semibold text-ink">Сценарии</h2>
+        <div className="flex items-center gap-1">
+          <Button size="xs" variant="secondary" icon={<Plus />} onClick={onCreate}>
+            Новый
+          </Button>
+          <OverflowMenu
+            label="Действия со списком сценариев"
+            items={[{ key: 'reset', label: 'Сбросить демо-сценарии', icon: <RotateCcw />, tone: 'danger', onSelect: onReset }]}
+          />
+        </div>
       </div>
-      <nav aria-label="Список сценариев" className="scrollbar-thin flex-1 space-y-3 overflow-y-auto px-2 py-2.5">
+      <nav aria-label="Список сценариев" className="scrollbar-thin flex-1 space-y-6 overflow-y-auto px-2 pt-2 pb-6">
         {groups.map((g) => (
           <div key={g.title}>
-            <p className="label-caps px-2 pb-1">{g.title}</p>
+            <p className="px-2.5 pb-1.5 text-13 font-medium text-faint">{g.title}</p>
             {g.items.length === 0 ? (
-              <div className="mx-1 rounded-md border border-dashed border-line-strong px-3 py-3 text-xs text-muted">
-                Своих сценариев пока нет. Нажмите «Новый» или измените параметры и сохраните как новый.
-              </div>
+              <p className="px-2.5 py-1 text-13 text-muted">Пока нет — нажмите «Новый».</p>
             ) : (
               <ul className="space-y-0.5">
                 {g.items.map((s) => {
@@ -55,28 +58,24 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
                         type="button"
                         onClick={() => onSelect(s.id)}
                         aria-current={active ? 'true' : undefined}
-                        className={clsx(
-                          'w-full rounded-md px-2.5 py-2 text-left transition-colors',
-                          active ? 'bg-accent-soft ring-1 ring-accent-line' : 'hover:bg-subtle',
-                        )}
+                        className={clsx('w-full rounded-lg px-2.5 py-2 text-left transition-colors', active ? 'bg-sunken' : 'hover:bg-subtle')}
                       >
                         <span className="flex items-center justify-between gap-2">
-                          <span className="truncate text-13 font-medium text-ink">
-                            {s.name}
-                            {active && dirty && <span className="ml-1 text-warn" title="Есть несохранённые изменения">•</span>}
-                          </span>
-                          <span className="flex shrink-0 items-center gap-1 text-2xs text-faint">
-                            {s.kind === 'baseline' && <Lock className="size-3" aria-label="только чтение" />}
-                            {KIND_LABEL[s.kind]}
-                          </span>
+                          <span className="truncate text-sm font-medium text-ink">{s.name}</span>
+                          {active && dirty && (
+                            <span className="size-2 shrink-0 rounded-full bg-warn-mark" title="Есть несохранённые изменения">
+                              <span className="sr-only">Есть несохранённые изменения</span>
+                            </span>
+                          )}
+                          {s.kind === 'baseline' && !(active && dirty) && <Lock className="size-3.5 shrink-0 text-faint" aria-label="Только чтение" />}
                         </span>
                         {s.kind !== 'baseline' && (
-                          <span className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-2xs text-muted">
+                          <span className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-13 text-muted">
                             <span className="flex items-center gap-1">
-                              выпуск <Delta delta={dOut} showAbsolute={false} className="!text-2xs" />
+                              выпуск <Delta delta={dOut} showAbsolute={false} />
                             </span>
                             <span className="flex items-center gap-1">
-                              цикл <Delta delta={dCycle} showAbsolute={false} className="!text-2xs" />
+                              цикл <Delta delta={dCycle} showAbsolute={false} />
                             </span>
                           </span>
                         )}
@@ -89,11 +88,6 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
           </div>
         ))}
       </nav>
-      <div className="border-t border-line px-3 py-2.5">
-        <Button size="xs" variant="ghost" icon={<RotateCcw />} onClick={onReset} className="text-muted">
-          Сбросить демо-сценарии
-        </Button>
-      </div>
     </div>
   )
 }

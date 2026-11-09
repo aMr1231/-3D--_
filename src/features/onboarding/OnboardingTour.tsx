@@ -155,7 +155,7 @@ export function OnboardingTour() {
   return (
     <div className="fixed inset-0 z-[80]" role="presentation">
       <div
-        className="pointer-events-none fixed rounded-lg ring-2 ring-accent-bright"
+        className="pointer-events-none fixed rounded-xl ring-2 ring-accent-bright"
         style={{
           top: rect.top - PAD,
           left: rect.left - PAD,
@@ -171,15 +171,15 @@ export function OnboardingTour() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="onboarding-title"
-        className="fixed animate-fade-in rounded-lg border border-line bg-surface p-4 shadow-[0_16px_48px_rgb(16_24_32/0.25)] outline-none"
+        className="fixed animate-fade-in rounded-xl border border-line bg-surface p-5 shadow-overlay outline-none"
         style={{ top, left, width: cardW }}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="tnum text-2xs font-medium text-accent">
+            <p className="tnum text-13 font-medium text-accent">
               Шаг {index + 1} из {steps.length}
             </p>
-            <h2 id="onboarding-title" className="mt-0.5 text-[15px] font-semibold text-ink">
+            <h2 id="onboarding-title" className="mt-1 text-15 font-semibold text-ink">
               {step.title}
             </h2>
           </div>
@@ -187,8 +187,8 @@ export function OnboardingTour() {
             <X />
           </Button>
         </div>
-        <p className="mt-1.5 text-13 leading-relaxed text-ink-2">{step.text}</p>
-        <div className="mt-3 flex items-center justify-between gap-2">
+        <p className="mt-2 text-sm leading-relaxed text-ink-2">{step.text}</p>
+        <div className="mt-4 flex items-center justify-between gap-2">
           <div className="flex gap-1" aria-hidden>
             {steps.map((s, i) => (
               <span key={s.target} className={`h-1.5 rounded-full transition-all ${i === index ? 'w-4 bg-accent' : 'w-1.5 bg-line-strong'}`} />

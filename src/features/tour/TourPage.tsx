@@ -1,11 +1,11 @@
-import { Footprints, Hand, LocateFixed, MousePointerClick, Route, TriangleExclamationPoint, X } from 'lucide-react'
+import { Footprints, Hand, LocateFixed, Route, TriangleExclamationPoint, X } from 'lucide-react'
 import { lazy, Suspense, useCallback, useState } from 'react'
 import { useSearchParams } from 'react-router'
 import { ScenarioPicker } from '@/components/ScenarioPicker'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/Controls'
 import { PageSkeleton } from '@/components/ui/Feedback'
-import { BASELINE_SCENARIO_ID } from '@/data/demo/scenarios'
+import { CanvasHeader } from '@/components/ui/Panel'
 import { TOUR_ROUTE, getPoi, poiForStage } from '@/data/demo/tour'
 import { useIsMobile, usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 import { BASELINE_RESULT, useSimulation } from '@/hooks/useSimulation'
@@ -14,6 +14,7 @@ import { BASELINE_SCENARIO, useActiveScenario } from '@/store/scenarios'
 import { FloorPlan } from './FloorPlan'
 import { PoiPanel } from './PoiPanel'
 import { SceneBoundary, detectWebGL } from './SceneBoundary'
+import { TourInfo } from './TourInfo'
 
 const FactoryScene = lazy(() => import('./scene/FactoryScene').then((m) => ({ default: m.FactoryScene })))
 
@@ -73,12 +74,12 @@ export default function TourPage() {
 
   const speedRatio = BASELINE_RESULT.outputPerHour > 0 ? result.outputPerHour / BASELINE_RESULT.outputPerHour : 1
   const fallback = (reason: string) => (
-    <div className="scrollbar-thin flex h-full flex-col items-center justify-center gap-4 overflow-auto bg-subtle p-4">
-      <p className="flex max-w-[560px] items-start gap-2 rounded-md border border-warn-mark/40 bg-warn-soft px-3 py-2 text-xs text-warn" role="status">
-        <TriangleExclamationPoint className="mt-px size-3.5 shrink-0" aria-hidden />
+    <div className="scrollbar-thin flex h-full flex-col items-center justify-center gap-5 overflow-auto bg-canvas p-4">
+      <p className="flex max-w-[560px] items-start gap-2 rounded-lg bg-warn-soft px-4 py-3 text-13 text-warn" role="status">
+        <TriangleExclamationPoint className="mt-px size-4 shrink-0" aria-hidden />
         {reason} Показан план цеха — точки интереса, метрики и переходы работают так же.
       </p>
-      <div className="w-full max-w-[860px] rounded-lg border border-line bg-surface p-3">
+      <div className="w-full max-w-[860px] rounded-xl border border-line bg-surface p-4">
         <FloorPlan result={result} selectedPoiId={poi?.id ?? null} onSelect={selectPoi} showStatus={isManager} />
       </div>
     </div>
@@ -86,20 +87,12 @@ export default function TourPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="shrink-0 border-b border-line bg-surface px-4 py-3 md:px-5">
-        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <div className="min-w-0">
-            <h1 className="text-lg font-semibold tracking-[-0.01em] text-ink sm:text-xl">3D-тур по производству</h1>
-            <p className="hidden text-13 text-muted sm:block">
-              {isManager
-                ? 'Цех №1 в объёме: выберите участок или метку — откроются живые метрики двойника и переход к процессу.'
-                : 'Виртуальная экскурсия по линии выпуска корпусов редукторов.'}
-            </p>
-          </div>
-          <div className="flex w-full flex-nowrap items-end gap-2 sm:w-auto sm:flex-wrap">
+      <CanvasHeader
+        title="3D-тур"
+        controls={
+          <div className="flex w-full flex-nowrap items-center gap-2 sm:w-auto">
             {isManager && <ScenarioPicker className="min-w-0 flex-1 sm:w-[220px] sm:flex-none" />}
             <div className="shrink-0">
-              <span className="mb-1 block text-2xs text-muted max-sm:sr-only">Режим</span>
               <SegmentedControl
                 label="Режим тура"
                 value={mode}
@@ -125,12 +118,12 @@ export default function TourPage() {
               <span className="max-sm:hidden">Общий вид</span>
             </Button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      <div className="relative min-h-0 flex-1 bg-[#e9ecef]">
+      <div className="relative min-h-0 flex-1 bg-[#ececef]">
         {unknownPoi && (
-          <div role="alert" className="absolute top-3 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-md border border-warn-mark/50 bg-warn-soft px-3 py-2 text-13 text-warn shadow-sm">
+          <div role="alert" className="absolute top-4 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 rounded-lg border border-warn-mark/50 bg-warn-soft px-3 py-2 text-sm text-warn shadow-overlay">
             <TriangleExclamationPoint className="size-4" aria-hidden />
             Точка «{unknownPoi}» не найдена.
             <Button size="xs" variant="ghost" onClick={() => selectPoi(null)} icon={<X />}>
@@ -172,17 +165,7 @@ export default function TourPage() {
 
         {webgl && ready && (
           <>
-            <div className="pointer-events-none absolute bottom-3 left-1/2 z-10 hidden max-w-[300px] -translate-x-1/2 data-[hidden=true]:!hidden rounded-md border border-line bg-surface/90 px-3 py-2 text-2xs text-muted md:block" data-hidden={!!poi || mode === 'route'}>
-              <p className="flex items-center gap-1.5">
-                <MousePointerClick className="size-3.5" aria-hidden /> Клик по зоне или метке — карточка участка
-              </p>
-              <p className="mt-0.5">Вращение — левая кнопка · сдвиг — правая · масштаб — колесо</p>
-            </div>
-            <div className="absolute bottom-3 left-3 z-10 hidden w-[300px] rounded-lg border border-line bg-surface/95 p-2 shadow-sm lg:block">
-              <p className="mb-1 flex items-center justify-between px-1 text-2xs text-muted">
-                <span>План цеха · {TOUR_ROUTE.stops.length} точек</span>
-                {isManager && scenario.id !== BASELINE_SCENARIO_ID && <span className="truncate text-accent">{scenario.name}</span>}
-              </p>
+            <div className="absolute bottom-4 left-4 z-10 hidden w-[280px] rounded-xl border border-line bg-surface/90 p-2 backdrop-blur lg:block">
               <FloorPlan result={result} selectedPoiId={poi?.id ?? null} onSelect={selectPoi} showStatus={isManager} compact />
             </div>
             {mode === 'route' && !poi && (
@@ -200,7 +183,6 @@ export default function TourPage() {
             key={poi.id}
             poi={poi}
             result={result}
-            scenarioName={scenario.name}
             canOpenTwin={isManager}
             routeMode={mode === 'route'}
             onClose={() => selectPoi(null)}
@@ -208,6 +190,7 @@ export default function TourPage() {
           />
         )}
       </div>
+      <TourInfo result={result} poiCount={TOUR_ROUTE.stops.length} scenarioName={isManager ? scenario.name : null} isManager={isManager} />
     </div>
   )
 }

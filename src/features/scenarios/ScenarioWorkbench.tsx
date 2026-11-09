@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useBlocker, useNavigate } from 'react-router'
 import { Button } from '@/components/ui/Button'
 import { SegmentedControl } from '@/components/ui/Controls'
+import { OverflowMenu } from '@/components/ui/Menu'
 import { ConfirmDialog, NameDialog } from '@/components/ui/Dialog'
 import { getStage } from '@/data/demo/enterprise'
 import { BASELINE_SCENARIO_ID } from '@/data/demo/scenarios'
@@ -15,6 +16,7 @@ import { toast } from '@/store/toast'
 import { ParameterEditor } from './ParameterEditor'
 import { countChanges, paramsEqual } from './params'
 import { ResultsPanel, type Calculation } from './ResultsPanel'
+import { ScenariosInfo } from './ScenariosInfo'
 
 interface ScenarioWorkbenchProps {
   scenario: Scenario
@@ -107,91 +109,82 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      {/* Шапка сценария и панель действий */}
-      <div className="shrink-0 border-b border-line bg-surface px-4 py-3 md:px-5">
+      {/* Шапка сценария: название и основные действия; второстепенные — в меню «…» */}
+      <div className="shrink-0 border-b border-line bg-canvas px-4 py-4 md:px-6">
         {scenarioSelect}
-        <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="truncate text-[17px] font-semibold tracking-[-0.01em] text-ink">{scenario.name}</h1>
-              {isBaseline && (
-                <span className="inline-flex items-center gap-1 rounded-[4px] bg-subtle px-1.5 py-0.5 text-2xs text-muted">
-                  <Lock className="size-3" aria-hidden /> только чтение
-                </span>
-              )}
+              <h1 className="truncate text-xl font-semibold text-ink sm:text-title">{scenario.name}</h1>
+              {isBaseline && <Lock className="size-4 shrink-0 text-faint" aria-label="Только чтение" />}
             </div>
-            <p className="mt-0.5 max-w-[680px] text-xs text-muted">{scenario.description || 'Без описания'}</p>
+            {scenario.description && <p className="mt-1 max-w-[680px] truncate text-sm text-muted">{scenario.description}</p>}
           </div>
-          <div className="flex flex-wrap items-center gap-1">
-            {!isBaseline && (
-              <Button size="sm" variant="ghost" icon={<Pencil />} onClick={() => setNameDialog({ mode: 'rename' })}>
-                <span className="hidden sm:inline">Переименовать</span>
-                <span className="sr-only sm:hidden">Переименовать</span>
-              </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            {changes > 0 && (
+              <span className="mr-1 text-13 text-muted" aria-live="polite">
+                {changes} {plural(changes, { one: 'изменение', few: 'изменения', many: 'изменений' })}
+                {!isBaseline && dirty ? ' · не сохранено' : ''}
+              </span>
             )}
-            <Button
-              size="sm"
-              variant="ghost"
-              icon={<Copy />}
-              onClick={() => {
-                const copy = duplicateScenario(scenario.id)
-                if (copy) {
-                  toast.success('Создана копия', `«${copy.name}»`)
-                  onOpenScenario(copy.id, true)
-                }
-              }}
-              disabled={dirty}
-              title={dirty ? 'Сначала сохраните или сбросьте изменения' : undefined}
-            >
-              <span className="hidden sm:inline">Дублировать</span>
-              <span className="sr-only sm:hidden">Дублировать</span>
-            </Button>
-            {!isBaseline && (
-              <Button size="sm" variant="ghost" icon={<Trash />} onClick={() => setConfirmDelete(true)} className="hover:text-crit">
-                <span className="hidden sm:inline">Удалить</span>
-                <span className="sr-only sm:hidden">Удалить</span>
-              </Button>
-            )}
-            <Button size="sm" variant="ghost" icon={<Workflow />} onClick={showOnTwin} disabled={dirty} title={dirty ? 'Сохраните изменения, чтобы открыть сценарий на схеме и в 3D-туре' : 'Открыть сценарий на мнемосхеме'}>
-              <span className="hidden sm:inline">На схеме</span>
-              <span className="sr-only sm:hidden">На схеме</span>
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <p className="text-xs text-muted" aria-live="polite">
-            {changes > 0 ? (
-              <>
-                Изменено {changes} {plural(changes, { one: 'параметр', few: 'параметра', many: 'параметров' })}
-                {isBaseline ? ' — сохраните как новый сценарий' : dirty ? ' · не сохранено' : ''}
-              </>
-            ) : (
-              'Измените параметры линии и запустите расчёт'
-            )}
-          </p>
-          <div className="flex flex-wrap items-center gap-1.5">
             {dirty && (
               <Button size="sm" variant="ghost" icon={<RotateCcw />} onClick={() => setDraft(scenario.params)}>
                 Сбросить
               </Button>
             )}
-            {!isBaseline && (
+            <Button
+              size="sm"
+              variant="ghost"
+              icon={<Workflow />}
+              onClick={showOnTwin}
+              disabled={dirty}
+              title={dirty ? 'Сохраните изменения, чтобы открыть сценарий на схеме и в 3D-туре' : 'Открыть сценарий на мнемосхеме'}
+            >
+              <span className="max-sm:sr-only">На схеме</span>
+            </Button>
+            {isBaseline ? (
+              <Button size="sm" variant="secondary" icon={<Save />} onClick={() => setNameDialog({ mode: 'saveAs' })} disabled={!dirty}>
+                Сохранить как новый
+              </Button>
+            ) : (
               <Button size="sm" variant="secondary" icon={<Save />} onClick={save} disabled={!dirty}>
                 Сохранить
               </Button>
             )}
-            <Button size="sm" variant="secondary" icon={<Save />} onClick={() => setNameDialog({ mode: 'saveAs' })} disabled={isBaseline && !dirty}>
-              Сохранить как новый
-            </Button>
             <Button size="sm" variant="primary" icon={<Calculator />} onClick={run} loading={running}>
               {running ? 'Расчёт…' : 'Рассчитать'}
             </Button>
+            <OverflowMenu
+              label="Другие действия со сценарием"
+              items={[
+                ...(!isBaseline
+                  ? [{ key: 'saveAs', label: 'Сохранить как новый', icon: <Save />, onSelect: () => setNameDialog({ mode: 'saveAs' }) }]
+                  : []),
+                ...(!isBaseline ? [{ key: 'rename', label: 'Переименовать', icon: <Pencil />, onSelect: () => setNameDialog({ mode: 'rename' }) }] : []),
+                {
+                  key: 'duplicate',
+                  label: 'Дублировать',
+                  icon: <Copy />,
+                  disabled: dirty,
+                  disabledHint: 'Сначала сохраните или сбросьте изменения',
+                  onSelect: () => {
+                    const copy = duplicateScenario(scenario.id)
+                    if (copy) {
+                      toast.success('Создана копия', `«${copy.name}»`)
+                      onOpenScenario(copy.id, true)
+                    }
+                  },
+                },
+                ...(!isBaseline
+                  ? [{ key: 'delete', label: 'Удалить', icon: <Trash />, tone: 'danger' as const, onSelect: () => setConfirmDelete(true) }]
+                  : []),
+              ]}
+            />
           </div>
         </div>
 
         <SegmentedControl
-          className="mt-3 lg:hidden"
+          className="mt-4 flex w-full lg:hidden [&>button]:flex-1"
           label="Раздел"
           value={mobileTab}
           onChange={setMobileTab}
@@ -203,9 +196,9 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
       </div>
 
       <div className="min-h-0 flex-1 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(360px,420px)]">
-        <div className={clsx('scrollbar-thin h-full overflow-y-auto bg-canvas p-4 md:p-5', mobileTab !== 'params' && 'hidden lg:block')}>
+        <div className={clsx('scrollbar-thin h-full overflow-y-auto bg-canvas px-4 py-6 md:px-6', mobileTab !== 'params' && 'hidden lg:block')}>
           {suggestion && stageName && (
-            <div className="mb-3 rounded-md border border-accent-line bg-accent-soft px-3 py-2 text-xs text-ink-2">
+            <div className="mb-4 rounded-xl bg-accent-soft px-4 py-3 text-sm text-ink-2">
               Предложено с обзора: {suggestion.delta > 0 ? '+1' : '−1'} ресурс на участке «{stageName}». Нажмите «Рассчитать», чтобы
               увидеть эффект.
             </div>
@@ -221,9 +214,9 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
         </div>
         <aside
           aria-label="Результаты расчёта"
-          className={clsx('scrollbar-thin h-full overflow-y-auto border-line bg-surface p-4 md:p-5 lg:border-l', mobileTab !== 'results' && 'hidden lg:block')}
+          className={clsx('scrollbar-thin h-full overflow-y-auto border-line bg-surface px-5 py-6 md:px-6 lg:border-l', mobileTab !== 'results' && 'hidden lg:block')}
         >
-          <h2 className="mb-3 text-13 font-semibold text-ink">Сравнение с базовым режимом</h2>
+          <h2 className="mb-4 text-15 font-semibold text-ink">Сравнение с базовым режимом</h2>
           <ResultsPanel
             base={BASELINE_RESULT}
             calculation={calculation}
@@ -279,6 +272,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
         onCancel={() => blocker.reset?.()}
         onConfirm={() => blocker.proceed?.()}
       />
+      <ScenariosInfo calculation={calculation} stale={stale} isBaseline={isBaseline} />
     </div>
   )
 }

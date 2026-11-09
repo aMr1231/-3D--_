@@ -13,7 +13,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useReactFlow, type FitViewOptions } from '@xyflow/react'
 
 type Padding = NonNullable<FitViewOptions['padding']>
-import { ENTERPRISE, STAGES } from '@/data/demo/enterprise'
+import { STAGES } from '@/data/demo/enterprise'
 import { formatNumber } from '@/domain/format'
 import type { SimulationResult } from '@/domain/types'
 import { usePrefersReducedMotion } from '@/hooks/useMediaQuery'
@@ -83,9 +83,9 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
         selectable: false,
         data: {
           kind: 'source',
-          title: 'Запуск в производство',
+          title: 'Запуск',
           value: `${formatNumber(result.params.loadPerHour, 1)} шт/ч`,
-          caption: `${ENTERPRISE.product.name}`,
+          caption: 'заготовки',
           handle: Position.Right,
         },
       },
@@ -96,7 +96,7 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
         selectable: false,
         data: {
           kind: 'sink',
-          title: 'Отгрузка заказчикам',
+          title: 'Отгрузка',
           value: `${formatNumber(result.outputPerDay, 0)} шт/сут`,
           caption: `план ${formatNumber(result.plannedOutputPerDay, 0)} шт`,
           handle: Position.Right,
@@ -182,7 +182,7 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
       proOptions={{ hideAttribution: true }}
       aria-label="Мнемосхема производственной линии"
     >
-      <Background variant={BackgroundVariant.Dots} gap={20} size={1.2} color="#cfd5dc" bgColor="#f7f8f9" />
+      <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#dcdce1" bgColor="#f7f7f8" />
       <Controls showInteractive={false} position="bottom-right" />
       <FitToPanel panelOpen={!!selectedStageId} />
     </ReactFlow>

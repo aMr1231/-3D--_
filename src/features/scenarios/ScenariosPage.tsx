@@ -62,8 +62,8 @@ export default function ScenariosPage() {
   }
 
   const scenarioSelect = (
-    <div className="mb-3 xl:hidden">
-      <label htmlFor={selectId} className="mb-1 block text-2xs text-muted">
+    <div className="mb-4 xl:hidden">
+      <label htmlFor={selectId} className="sr-only">
         Сценарий
       </label>
       <Select id={selectId} size="sm" value={scenario.id} onChange={(e) => openScenario(e.target.value)} className="w-full sm:w-[320px]">
@@ -78,7 +78,7 @@ export default function ScenariosPage() {
 
   return (
     <div className="flex h-full min-h-0">
-      <aside className="hidden w-[272px] shrink-0 border-r border-line bg-surface xl:block">
+      <aside className="hidden w-[280px] shrink-0 border-r border-line bg-canvas xl:block">
         <ScenarioList
           scenarios={scenarios}
           selectedId={scenario.id}

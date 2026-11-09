@@ -41,15 +41,12 @@ export function FloorPlan({ result, selectedPoiId, onSelect, showStatus, compact
               height={z.size[1]}
               rx={0.4}
               fill={active ? '#e8f2f5' : '#ffffff'}
-              stroke={active ? '#17708a' : showStatus ? STATUS_HEX[st.status] : '#c5cbd2'}
+              stroke={active ? '#17708a' : showStatus ? STATUS_HEX[st.status] : '#d9d9de'}
               strokeWidth={active ? 0.35 : 0.22}
             />
             {!compact && (
               <>
-                <text x={tx(z.center[0])} y={tz(z.center[1]) - 1.2} textAnchor="middle" fontSize={1.3} fill="#5f6670" fontFamily="JetBrains Mono Variable, monospace">
-                  {def.code}
-                </text>
-                <text x={tx(z.center[0])} y={tz(z.center[1]) + 0.6} textAnchor="middle" fontSize={1.35} fill="#15181c" fontFamily="Inter Variable, sans-serif">
+                <text x={tx(z.center[0])} y={tz(z.center[1]) + 0.5} textAnchor="middle" fontSize={1.45} fontWeight={500} fill="#111113" fontFamily="Inter Variable, sans-serif">
                   {def.shortName}
                 </text>
               </>

@@ -13,7 +13,6 @@ interface StageChartProps {
 }
 
 const dim = (highlight: string | null, id: string) => (highlight && highlight !== id ? 0.32 : 1)
-const monoTick = { ...AXIS_TICK, fontFamily: 'JetBrains Mono Variable, monospace' }
 
 /* ───────── Мощность и факт ───────── */
 
@@ -29,7 +28,6 @@ export function CapacityChart({ result, highlight }: StageChartProps) {
   return (
     <ChartFrame
       title="Производительность по этапам"
-      subtitle="Мощность участка и фактически обработанный поток, шт/ч"
       legend={
         <ChartLegend
           items={[
@@ -43,7 +41,7 @@ export function CapacityChart({ result, highlight }: StageChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 8, right: 4, left: -16, bottom: 0 }} barGap={2} barCategoryGap="28%">
               <CartesianGrid vertical={false} stroke={CHART.grid} />
-              <XAxis dataKey="code" tick={monoTick} tickLine={false} axisLine={{ stroke: CHART.axis }} />
+              <XAxis dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} interval={0} />
               <YAxis tick={AXIS_TICK} tickLine={false} axisLine={false} width={44} />
               <Tooltip
                 cursor={{ fill: 'rgb(16 24 32 / 0.04)' }}
@@ -105,14 +103,13 @@ export function UtilizationChart({ result, highlight }: StageChartProps) {
   return (
     <ChartFrame
       title="Загрузка ресурсов"
-      subtitle="Цвет — статус участка; пунктир — пороги 85 % и 95 %"
       chart={
         <div className="h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} layout="vertical" margin={{ top: 4, right: 36, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
               <XAxis type="number" domain={[0, 1]} ticks={[0, 0.25, 0.5, 0.75, 1]} tickFormatter={(v: number) => formatPercent(v)} tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} />
-              <YAxis type="category" dataKey="code" tick={monoTick} tickLine={false} axisLine={false} width={40} />
+              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={92} />
               <ReferenceLine x={0.85} stroke={CHART.warn} strokeDasharray="3 3" />
               <ReferenceLine x={0.95} stroke={CHART.crit} strokeDasharray="3 3" />
               <Tooltip
@@ -167,11 +164,9 @@ export function CycleBreakdownChart({ result, highlight }: StageChartProps) {
     const s = result.stages[i]
     return { id: d.id, code: d.code, name: d.shortName, process: s.processMin, wait: s.waitMin, transport: s.transportMin }
   })
-  const totals = data.reduce((a, d) => ({ process: a.process + d.process, wait: a.wait + d.wait, transport: a.transport + d.transport }), { process: 0, wait: 0, transport: 0 })
   return (
     <ChartFrame
       title="Время выполнения операций"
-      subtitle={`Из чего складывается время цикла ${formatDuration(result.cycleTimeMin)}: ожидание ${formatPercent(totals.wait / result.cycleTimeMin)}, обработка ${formatPercent(totals.process / result.cycleTimeMin)}`}
       legend={
         <ChartLegend
           items={[
@@ -187,7 +182,7 @@ export function CycleBreakdownChart({ result, highlight }: StageChartProps) {
             <BarChart data={data} layout="vertical" margin={{ top: 4, right: 12, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
               <XAxis type="number" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} мин`} />
-              <YAxis type="category" dataKey="code" tick={monoTick} tickLine={false} axisLine={false} width={40} />
+              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={92} />
               <Tooltip
                 cursor={{ fill: 'rgb(16 24 32 / 0.04)' }}
                 content={(props) => {
@@ -259,7 +254,6 @@ export function CostStructure({ result, highlight }: StageChartProps) {
   return (
     <ChartFrame
       title="Структура затрат"
-      subtitle={`Операционные затраты ${formatRubCompact(result.operatingCostPerDay)}/сут, из них простой ресурсов ${formatRubCompact(result.idleCostPerDay)}`}
       legend={
         <ChartLegend
           items={[
@@ -270,14 +264,11 @@ export function CostStructure({ result, highlight }: StageChartProps) {
         />
       }
       chart={
-        <ul className="space-y-3 pt-1" aria-label="Затраты участков за сутки">
+        <ul className="space-y-4 pt-1" aria-label="Затраты участков за сутки">
           {rows.map((r) => (
             <li key={r.id} style={{ opacity: dim(highlight, r.id) }}>
-              <div className="mb-1 flex items-baseline justify-between text-xs">
-                <span className="text-ink-2">
-                  <span className="code-tag mr-1.5 text-muted">{r.code}</span>
-                  {r.name}
-                </span>
+              <div className="mb-1.5 flex items-baseline justify-between text-13">
+                <span className="text-ink-2">{r.name}</span>
                 <span className="tnum font-medium text-ink">{formatRubCompact(r.total)}</span>
               </div>
               <div

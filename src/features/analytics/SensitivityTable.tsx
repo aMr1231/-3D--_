@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Delta } from '@/components/ui/Delta'
 import { Panel } from '@/components/ui/Panel'
-import { Meter, StageCode, StatusIndicator } from '@/components/ui/Status'
+import { Meter, StatusIndicator } from '@/components/ui/Status'
 import { LINE_MODEL, STAGES } from '@/data/demo/enterprise'
 import { formatDuration, formatNumber, formatPercent } from '@/domain/format'
 import { compareMetric } from '@/domain/metrics'
@@ -22,23 +22,22 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
   return (
     <Panel
       title="Перегрузки и чувствительность"
-      subtitle="Участки ранжированы по тяжести; эффект рассчитан перерасчётом линии с изменённым числом ресурсов"
       flush
     >
-      <div className="scrollbar-thin overflow-x-auto">
-        <table className="w-full min-w-[880px] text-13">
+      <div className="scrollbar-thin overflow-x-auto pb-2">
+        <table className="w-full min-w-[900px] text-sm">
           <caption className="sr-only">Перегрузки и анализ чувствительности</caption>
           <thead>
-            <tr className="border-b border-line bg-subtle/70 text-left text-xs text-muted">
-              <th scope="col" className="px-4 py-2 font-medium">#</th>
-              <th scope="col" className="px-3 py-2 font-medium">Участок</th>
-              <th scope="col" className="w-[150px] px-3 py-2 font-medium">Загрузка</th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">Ожидание</th>
-              <th scope="col" className="border-l border-line px-3 py-2 text-right font-medium">+1 ресурс: цикл</th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">выпуск</th>
-              <th scope="col" className="px-3 py-2 text-right font-medium">себестоимость</th>
-              <th scope="col" className="border-l border-line px-3 py-2 font-medium">−1 ресурс</th>
-              <th scope="col" className="px-3 py-2"><span className="sr-only">Действие</span></th>
+            <tr className="border-b border-line text-left text-xs text-muted">
+              <th scope="col" className="py-3 pr-2 pl-5 font-medium md:pl-6">#</th>
+              <th scope="col" className="px-3 py-3 font-medium">Участок</th>
+              <th scope="col" className="w-[160px] px-3 py-3 font-medium">Загрузка</th>
+              <th scope="col" className="px-3 py-3 text-right font-medium">Ожидание</th>
+              <th scope="col" className="px-3 py-3 text-right font-medium">+1 ресурс: цикл</th>
+              <th scope="col" className="px-3 py-3 text-right font-medium">Выпуск</th>
+              <th scope="col" className="px-3 py-3 text-right font-medium">Себестоимость</th>
+              <th scope="col" className="px-3 py-3 font-medium">−1 ресурс</th>
+              <th scope="col" className="px-3 py-3"><span className="sr-only">Действие</span></th>
             </tr>
           </thead>
           <tbody>
@@ -49,31 +48,28 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
               const minusOverload = minus.summary && (minus.stageUtilizationAfter >= 0.95 || minus.summary.outputPerDay < result.outputPerDay - 0.5)
               return (
                 <tr key={def.id} className={clsx('border-b border-line last:border-0', highlight === def.id && 'bg-accent-soft/60')}>
-                  <td className="tnum px-4 py-2.5 text-xs text-faint">{idx + 1}</td>
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2">
-                      <StageCode>{def.code}</StageCode>
-                      <span className="font-medium text-ink">{def.shortName}</span>
-                    </div>
-                    <StatusIndicator status={s.status} className="mt-1 text-xs" />
+                  <td className="tnum py-3 pr-2 pl-5 text-13 text-faint md:pl-6">{idx + 1}</td>
+                  <td className="px-3 py-3">
+                    <span className="font-medium text-ink">{def.shortName}</span>
+                    <StatusIndicator status={s.status} className="mt-1 text-13" />
                   </td>
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2">
+                  <td className="px-3 py-3">
+                    <div className="flex items-center gap-3">
                       <Meter value={s.utilization} status={s.status} className="flex-1" />
-                      <span className="tnum w-10 text-right text-xs">{formatPercent(s.utilization)}</span>
+                      <span className="tnum w-11 text-right text-13">{formatPercent(s.utilization)}</span>
                     </div>
                   </td>
-                  <td className="tnum px-3 py-2.5 text-right text-ink-2">{formatDuration(s.waitMin)}</td>
-                  <td className="border-l border-line px-3 py-2.5 text-right">
+                  <td className="tnum px-3 py-3 text-right text-ink-2">{formatDuration(s.waitMin)}</td>
+                  <td className="px-3 py-3 text-right">
                     <Delta delta={compareMetric('cycleTimeMin', result.cycleTimeMin, p.cycleTimeMin)} showShare={false} />
                   </td>
-                  <td className="px-3 py-2.5 text-right">
+                  <td className="px-3 py-3 text-right">
                     <Delta delta={compareMetric('outputPerDay', result.outputPerDay, p.outputPerDay)} showShare={false} />
                   </td>
-                  <td className="px-3 py-2.5 text-right">
+                  <td className="px-3 py-3 text-right">
                     <Delta delta={compareMetric('costPerUnit', result.costPerUnit, p.costPerUnit)} showAbsolute={false} />
                   </td>
-                  <td className="border-l border-line px-3 py-2.5 text-xs">
+                  <td className="px-3 py-3 text-13">
                     {!minus.feasible ? (
                       <span className="text-faint">нельзя — единственный ресурс</span>
                     ) : minusOverload ? (
@@ -84,12 +80,12 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
                       </span>
                     )}
                   </td>
-                  <td className="px-3 py-2.5 text-right">
+                  <td className="py-3 pr-5 pl-3 text-right md:pr-6">
                     <Link
                       to={`/scenarios?id=${scenarioId}&focus=${def.id}`}
-                      className="inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap text-accent hover:text-accent-hover"
+                      className="inline-flex items-center gap-1.5 text-13 font-medium whitespace-nowrap text-accent hover:text-accent-hover"
                     >
-                      <SlidersHorizontal className="size-3.5" aria-hidden /> Изменить
+                      <SlidersHorizontal className="size-4" aria-hidden /> Изменить
                     </Link>
                   </td>
                 </tr>

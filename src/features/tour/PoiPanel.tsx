@@ -1,7 +1,7 @@
 import { ArrowRight, ChartColumn, ChevronLeft, ChevronRight, SlidersHorizontal, Workflow } from 'lucide-react'
 import { ButtonLink, Button } from '@/components/ui/Button'
 import { SidePanel } from '@/components/ui/SidePanel'
-import { StageCode, StatusIndicator } from '@/components/ui/Status'
+import { StatusIndicator } from '@/components/ui/Status'
 import { getStage } from '@/data/demo/enterprise'
 import { TOUR_ROUTE } from '@/data/demo/tour'
 import { formatDuration, formatNumber, formatPercent, formatRub, plural } from '@/domain/format'
@@ -10,7 +10,6 @@ import type { PoiMetricKey, PointOfInterest, SimulationResult } from '@/domain/t
 interface PoiPanelProps {
   poi: PointOfInterest
   result: SimulationResult
-  scenarioName: string
   canOpenTwin: boolean
   routeMode: boolean
   onClose: () => void
@@ -20,7 +19,7 @@ interface PoiPanelProps {
 const FINANCIAL: PoiMetricKey[] = ['costPerUnit']
 
 /** Карточка точки интереса: рассказ для экскурсии + живые метрики модели + кейс + переход к процессу. */
-export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, onClose, onStep }: PoiPanelProps) {
+export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep }: PoiPanelProps) {
   const def = getStage(poi.stageId)
   const s = poi.stageId ? result.stages.find((x) => x.stageId === poi.stageId) : undefined
   const p = poi.stageId ? result.params.stages[poi.stageId] : undefined
@@ -58,28 +57,20 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
       label={`Точка интереса: ${poi.title}`}
       compactMobile
       onSwipe={routeMode ? onStep : undefined}
-      eyebrow={
-        <>
-          <span className="text-2xs font-medium text-muted">
-            Остановка {index + 1} из {TOUR_ROUTE.stops.length}
-          </span>
-          {def && <StageCode>{def.code}</StageCode>}
-          {s && canOpenTwin && <StatusIndicator status={s.status} variant="pill" />}
-        </>
-      }
+      eyebrow={s && canOpenTwin ? <StatusIndicator status={s.status} variant="pill" /> : undefined}
       title={poi.title}
-      headerExtra={<p className="text-xs text-muted">{poi.subtitle}</p>}
+      headerExtra={<p className="text-13 text-muted">{poi.subtitle}</p>}
       footer={
-        <div className="space-y-2">
+        <div className="space-y-3">
           {poi.stageId && canOpenTwin && (
-            <div className="grid grid-cols-3 gap-1.5">
-              <ButtonLink to={`/twin?stage=${poi.stageId}`} size="sm" variant="primary" icon={<Workflow />} className="px-1.5">
+            <div className="grid grid-cols-3 gap-2">
+              <ButtonLink to={`/twin?stage=${poi.stageId}`} size="sm" variant="primary" icon={<Workflow />} className="px-2">
                 Процесс
               </ButtonLink>
-              <ButtonLink to={`/analytics?stage=${poi.stageId}`} size="sm" variant="secondary" icon={<ChartColumn />} className="px-1.5">
+              <ButtonLink to={`/analytics?stage=${poi.stageId}`} size="sm" variant="secondary" icon={<ChartColumn />} className="px-2">
                 Метрики
               </ButtonLink>
-              <ButtonLink to={`/scenarios?focus=${poi.stageId}`} size="sm" variant="secondary" icon={<SlidersHorizontal />} className="px-1.5">
+              <ButtonLink to={`/scenarios?focus=${poi.stageId}`} size="sm" variant="secondary" icon={<SlidersHorizontal />} className="px-2">
                 Сценарий
               </ButtonLink>
             </div>
@@ -89,8 +80,8 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
               <Button size="sm" variant="ghost" icon={<ChevronLeft />} onClick={() => onStep(-1)} disabled={index <= 0}>
                 Назад
               </Button>
-              <span className="tnum text-xs text-muted">
-                {index + 1} / {TOUR_ROUTE.stops.length}
+              <span className="tnum text-13 text-muted">
+                Остановка {index + 1} из {TOUR_ROUTE.stops.length}
               </span>
               <Button size="sm" variant="secondary" onClick={() => onStep(1)} disabled={index >= TOUR_ROUTE.stops.length - 1}>
                 Далее <ChevronRight />
@@ -100,27 +91,22 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
         </div>
       }
     >
-      <div className="space-y-4 px-4 py-3.5">
-        <p className="text-13 leading-relaxed text-ink-2">{poi.description}</p>
+      <div className="space-y-7 px-5 pt-3 pb-6">
+        <p className="text-sm leading-relaxed text-ink-2">{poi.description}</p>
 
         {s && metrics.length > 0 && (
           <section aria-labelledby="poi-metrics">
-            <div className="mb-1.5 flex items-baseline justify-between gap-2">
-              <h3 id="poi-metrics" className="label-caps">
-                Показатели участка
-              </h3>
-              <span className="truncate text-2xs text-faint" title={scenarioName}>
-                модель · {scenarioName}
-              </span>
-            </div>
-            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line">
+            <h3 id="poi-metrics" className="text-13 font-semibold text-ink-2">
+              Показатели участка
+            </h3>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-4">
               {metrics.map((m) => {
                 const v = metricValue(m)
                 if (!v) return null
                 return (
-                  <div key={m} className="bg-surface px-3 py-2">
-                    <dt className="text-2xs text-muted">{v.label}</dt>
-                    <dd className="tnum mt-0.5 text-13 font-semibold text-ink">{v.value}</dd>
+                  <div key={m} className="min-w-0">
+                    <dt className="truncate text-13 text-muted">{v.label}</dt>
+                    <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{v.value}</dd>
                   </div>
                 )
               })}
@@ -130,26 +116,26 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
 
         {!poi.stageId && (
           <section>
-            <h3 className="label-caps mb-1.5">Линия сегодня</h3>
-            <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line">
-              <div className="bg-surface px-3 py-2">
-                <dt className="text-2xs text-muted">Выпуск</dt>
-                <dd className="tnum mt-0.5 text-13 font-semibold text-ink">{formatNumber(result.outputPerDay, 0)} шт/сут</dd>
+            <h3 className="text-13 font-semibold text-ink-2">Линия сегодня</h3>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4">
+              <div>
+                <dt className="text-13 text-muted">Выпуск</dt>
+                <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{formatNumber(result.outputPerDay, 0)} шт/сут</dd>
               </div>
-              <div className="bg-surface px-3 py-2">
-                <dt className="text-2xs text-muted">Время цикла</dt>
-                <dd className="tnum mt-0.5 text-13 font-semibold text-ink">{formatDuration(result.cycleTimeMin)}</dd>
+              <div>
+                <dt className="text-13 text-muted">Время цикла</dt>
+                <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{formatDuration(result.cycleTimeMin)}</dd>
               </div>
             </dl>
           </section>
         )}
 
         <section>
-          <h3 className="label-caps mb-1.5">Факты</h3>
-          <ul className="space-y-1 text-13 text-ink-2">
+          <h3 className="text-13 font-semibold text-ink-2">Факты</h3>
+          <ul className="mt-2 space-y-1.5 text-sm text-ink-2">
             {poi.facts.map((f) => (
-              <li key={f} className="flex gap-2">
-                <span className="mt-2 size-1 shrink-0 rounded-full bg-faint" aria-hidden />
+              <li key={f} className="flex gap-2.5">
+                <span className="mt-[9px] size-1 shrink-0 rounded-full bg-faint" aria-hidden />
                 {f}
               </li>
             ))}
@@ -157,22 +143,19 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
         </section>
 
         {c && (
-          <section aria-labelledby={`case-${c.id}`} className="rounded-md border border-line">
-            <div className="flex items-center justify-between gap-2 border-b border-line bg-subtle/70 px-3 py-1.5">
-              <h3 id={`case-${c.id}`} className="text-xs font-semibold text-ink">
-                Лучшая практика
-              </h3>
-              <span className="rounded-[3px] border border-warn-mark/40 bg-warn-soft px-1.5 text-2xs text-warn">демо-кейс</span>
-            </div>
-            <div className="space-y-2 px-3 py-2.5">
-              <p className="text-13 font-medium text-ink">{c.title}</p>
-              <p className="text-xs text-muted">{c.summary}</p>
-              <div className="flex items-center gap-2 rounded-md bg-subtle px-2.5 py-2 text-xs">
+          <section aria-labelledby={`case-${c.id}`} className="rounded-lg bg-subtle p-4">
+            <h3 id={`case-${c.id}`} className="text-13 font-semibold text-ink-2">
+              Лучшая практика
+            </h3>
+            <div className="mt-2 space-y-2">
+              <p className="text-sm font-medium text-ink">{c.title}</p>
+              <p className="text-13 text-muted">{c.summary}</p>
+              <div className="flex items-center gap-2 pt-1 text-13">
                 <span className="text-muted">{c.metric.label}</span>
                 <span className="ml-auto tnum text-muted line-through decoration-faint">
                   {formatNumber(c.metric.before, c.metric.before % 1 ? 1 : 0)} {c.metric.unit}
                 </span>
-                <ArrowRight className="size-3 text-faint" aria-hidden />
+                <ArrowRight className="size-3.5 text-faint" aria-hidden />
                 <span className="tnum font-semibold text-ink">
                   {formatNumber(c.metric.after, c.metric.after % 1 ? 1 : 0)} {c.metric.unit}
                 </span>
@@ -185,11 +168,6 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
           </section>
         )}
 
-        {!canOpenTwin && poi.stageId && (
-          <p className="rounded-md bg-subtle px-3 py-2 text-xs text-muted">
-            Показатели рассчитаны цифровым двойником линии. Подробный анализ процесса доступен сотрудникам предприятия.
-          </p>
-        )}
       </div>
     </SidePanel>
   )
