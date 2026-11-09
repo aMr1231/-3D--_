@@ -4,6 +4,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+// Порты можно сменить, если стандартные заняты: TWINLINE_WEB_PORT, TWINLINE_API_PORT.
+const webPort = Number(process.env.TWINLINE_WEB_PORT ?? 5173)
+const apiPort = Number(process.env.TWINLINE_API_PORT ?? 8000)
+
 export default defineConfig(({ command }) => ({
   // Сборка кладётся в backend/public/app — Laravel раздаёт её как одностраничное приложение.
   base: command === 'build' ? '/app/' : '/',
@@ -15,10 +19,10 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     host: '127.0.0.1',
-    port: 5173,
+    port: webPort,
     strictPort: true,
     // API на Laravel (backend/) запускается вместе с фронтендом: npm run dev
-    proxy: { '/api': { target: 'http://127.0.0.1:8000' } },
+    proxy: { '/api': { target: `http://127.0.0.1:${apiPort}` } },
   },
   build: {
     outDir: 'backend/public/app',

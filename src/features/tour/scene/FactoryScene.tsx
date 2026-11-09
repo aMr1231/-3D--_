@@ -1,14 +1,15 @@
 import { CameraControls, PerformanceMonitor } from '@react-three/drei'
-import { Canvas, useThree } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
-import { PMREMGenerator } from 'three'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { Canvas } from '@react-three/fiber'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { OVERVIEW_VIEW } from '@/data/demo/tour'
-import type { CameraView, SimulationResult } from '@/domain/types'
-import { FlowItems } from './FlowItems'
-import { Hall } from './Hall'
+import type { CameraView, SimulationResult, StageStatus } from '@/domain/types'
+import { FactoryModel } from './factory/FactoryModel'
+import type { StageId } from './factory/kit'
 import { AnchorProjector, HotspotOverlay } from './Hotspots'
-import { Zones } from './Zones'
+
+/** Базовая скорость конвейера в анимации; масштабируется отношением выпуска к базовому сценарию. */
+const BASE_FLOW = 120
+const MAX_CNC = 8
 
 export interface FactorySceneProps {
   result: SimulationResult
@@ -28,11 +29,16 @@ export interface FactorySceneProps {
   panelOpen: boolean
 }
 
-/** Стилизованная сцена цеха. Простая геометрия, общие материалы, тени только на ПК. */
+/** Стилизованная сцена цеха: процедурная модель, объединённая геометрия, тени только на ПК. */
 export function FactoryScene(props: FactorySceneProps) {
-  const { isMobile, reducedMotion, onReady } = props
+  const { isMobile, reducedMotion, onReady, result } = props
   const [dpr, setDpr] = useState(isMobile ? 1.25 : 1.75)
   const hotspotEls = useRef<Record<string, HTMLElement | null>>({})
+  const statuses = useMemo(
+    () => Object.fromEntries(result.stages.map((s) => [s.stageId, s.status])) as Record<StageId, StageStatus>,
+    [result],
+  )
+  const cncCount = Math.min(result.params.stages.machining?.resources ?? 4, MAX_CNC)
 
   return (
     <div className="relative h-full w-full">
@@ -41,38 +47,45 @@ export function FactoryScene(props: FactorySceneProps) {
       dpr={[1, dpr]}
       camera={{ position: OVERVIEW_VIEW.position, fov: isMobile ? 50 : 38, near: 0.5, far: 400 }}
       gl={{ antialias: true, powerPreference: 'high-performance' }}
-      onCreated={() => onReady()}
+      onCreated={({ gl }) => {
+        gl.toneMappingExposure = 1.03
+        onReady()
+      }}
       onPointerMissed={() => undefined}
       aria-label="Интерактивная 3D-модель цеха"
       role="img"
     >
-      <color attach="background" args={['#e4e8ec']} />
-      <fog attach="fog" args={['#e4e8ec', 95, 200]} />
-      <StudioEnvironment />
+      <color attach="background" args={['#eef0f2']} />
+      <fog attach="fog" args={['#eef0f2', 110, 220]} />
       <PerformanceMonitor onDecline={() => setDpr(1)} onIncline={() => setDpr(isMobile ? 1.25 : 1.75)} />
 
-      <hemisphereLight args={['#ffffff', '#aab2ba', 0.65]} />
+      <hemisphereLight args={['#ffffff', '#d8dee4', 0.9]} position={[0, 55, 0]} />
       <directionalLight
-        position={[22, 42, 18]}
-        intensity={2.3}
-        color="#fff5e8"
+        position={[28, 54, 36]}
+        intensity={0.94}
+        color="#fffdf8"
         castShadow={!isMobile}
         shadow-mapSize={[2048, 2048]}
-        shadow-camera-left={-42}
-        shadow-camera-right={42}
-        shadow-camera-top={26}
-        shadow-camera-bottom={-26}
-        shadow-camera-near={1}
-        shadow-camera-far={120}
-        shadow-bias={-0.0004}
+        shadow-camera-left={-50}
+        shadow-camera-right={50}
+        shadow-camera-top={34}
+        shadow-camera-bottom={-34}
+        shadow-camera-near={10}
+        shadow-camera-far={150}
+        shadow-bias={-0.00035}
         shadow-normalBias={0.02}
-        shadow-radius={3}
       />
-      <directionalLight position={[-30, 20, -10]} intensity={0.45} color="#dbe6ff" />
+      <directionalLight position={[-28, 30, -24]} intensity={0.3} color="#eef4f8" />
 
-      <Hall />
-      <Zones result={props.result} selectedStageId={props.selectedStageId} onSelectStage={props.onSelectStage} />
-      <FlowItems speedRatio={props.speedRatio} paused={reducedMotion} />
+      <FactoryModel
+        cncCount={cncCount}
+        statuses={statuses}
+        selectedStageId={props.selectedStageId}
+        onSelectStage={props.onSelectStage}
+        flowRate={BASE_FLOW * props.speedRatio}
+        quality={isMobile ? 'low' : 'high'}
+        paused={reducedMotion}
+      />
       <AnchorProjector elements={hotspotEls} />
       <CameraRig
         view={props.view}
@@ -148,26 +161,4 @@ function CameraRig({ view, nonce, smooth, isMobile, panelOpen }: { view: CameraV
       draggingSmoothTime={0.12}
     />
   )
-}
-
-/**
- * Процедурное студийное окружение (RoomEnvironment): мягкие отражения на металле, стекле и полу.
- * Генерируется в браузере — без загрузки HDR-файлов из сети.
- */
-function StudioEnvironment() {
-  const { gl, scene } = useThree()
-  useEffect(() => {
-    const pmrem = new PMREMGenerator(gl)
-    const room = new RoomEnvironment()
-    const env = pmrem.fromScene(room, 0.04).texture
-    scene.environment = env
-    scene.environmentIntensity = 0.55
-    return () => {
-      scene.environment = null
-      env.dispose()
-      pmrem.dispose()
-      room.dispose()
-    }
-  }, [gl, scene])
-  return null
 }

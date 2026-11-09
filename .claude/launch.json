@@ -4,12 +4,17 @@
     {
       "name": "twinline-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["run", "dev"],
       "port": 5173,
       "url": "http://127.0.0.1:5173"
+    },
+    {
+      "name": "twinline-alt",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "env": { "TWINLINE_WEB_PORT": "5180", "TWINLINE_API_PORT": "8010" },
+      "port": 5180,
+      "url": "http://127.0.0.1:5180"
     }
   ]
 }

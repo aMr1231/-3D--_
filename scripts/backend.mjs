@@ -3,7 +3,7 @@
  * Запуск серверной части (Laravel) из корня проекта.
  *
  *   node scripts/backend.mjs setup   — composer install, .env, ключ приложения, база с демо-данными
- *   node scripts/backend.mjs serve   — сервер разработки на http://127.0.0.1:8000 (с автоподготовкой)
+ *   node scripts/backend.mjs serve   — сервер разработки на http://127.0.0.1:8000 (с автоподготовкой; порт — TWINLINE_API_PORT)
  *   node scripts/backend.mjs test    — тесты сервера (PHPUnit)
  *   node scripts/backend.mjs <...>   — любая команда artisan
  *
@@ -70,7 +70,7 @@ if (cmd === 'setup') {
   prepare()
 } else if (cmd === 'serve') {
   prepare()
-  artisan('serve', '--host=127.0.0.1', '--port=8000', ...rest)
+  artisan('serve', '--host=127.0.0.1', `--port=${process.env.TWINLINE_API_PORT ?? 8000}`, ...rest)
 } else if (cmd === 'test') {
   artisan('test', ...rest)
 } else {
