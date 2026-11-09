@@ -1,6 +1,7 @@
 import clsx from 'clsx'
-import { CircleCheck, SlidersHorizontal, Workflow } from 'lucide-react'
+import { CircleCheck, SlidersHorizontal } from 'lucide-react'
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import { ButtonLink } from '@/components/ui/Button'
 import { StatusIndicator } from '@/components/ui/Status'
 import { LINE_MODEL, getStage } from '@/data/demo/enterprise'
@@ -71,7 +72,7 @@ export function IssuesList({ result }: { result: SimulationResult }) {
                 </div>
                 <p className="text-sm text-muted">{problem}</p>
                 <p className="text-sm text-ink">{advice}</p>
-                <div className="mt-auto flex flex-wrap gap-2 pt-1">
+                <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
                   <ButtonLink
                     to={`/scenarios?focus=${ins.stageId}${ins.sensitivity && ins.actionable ? `&delta=${ins.sensitivity.change}` : ''}`}
                     size="sm"
@@ -80,9 +81,9 @@ export function IssuesList({ result }: { result: SimulationResult }) {
                   >
                     Проверить на модели
                   </ButtonLink>
-                  <ButtonLink to={`/twin?stage=${ins.stageId}`} size="sm" variant="ghost" icon={<Workflow />}>
+                  <Link to={`/twin?stage=${ins.stageId}`} className="text-meta font-medium text-muted hover:text-ink">
                     На схеме
-                  </ButtonLink>
+                  </Link>
                 </div>
               </li>
             )

@@ -28,34 +28,36 @@ export function LineStatus({ result }: { result: SimulationResult }) {
 
   return (
     <section aria-labelledby="line-status-title" className="overflow-hidden rounded-2xl border border-line bg-surface">
-      <div className="grid gap-x-12 gap-y-8 p-6 md:p-8 xl:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] xl:items-center">
-        <div className="min-w-0 space-y-8">
-          <h2 id="line-status-title" className="flex items-start gap-3 text-xl leading-snug font-semibold text-ink">
-            <Icon className={clsx('mt-1 size-5 shrink-0', STATUS_TEXT[health.tone])} aria-hidden />
-            {health.title}
-          </h2>
-          <div>
-            <p className="flex flex-wrap items-baseline gap-x-2.5">
-              <span className="tnum text-display font-semibold text-ink">
-                <AnimatedNumber value={result.outputPerDay} format={(v) => formatNumber(v, 0)} countUpOnMount />
-              </span>
-              <span className="text-heading text-muted">изделий в сутки</span>
-            </p>
-            <p className="mt-3 text-sm text-muted">
-              {behind ? 'Выполнено ' : 'План выполнен на '}
-              <span className={clsx('tnum font-semibold', behind ? 'text-crit' : 'text-ok')}>{formatPercent(result.planAttainment, 0)}</span>
-              {behind ? ` плана · не хватает ${formatNumber(result.plannedOutputPerDay - result.outputPerDay, 0)} шт` : ''}
-            </p>
+      <div className="p-6 md:p-8">
+        <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-6">
+          <div className="min-w-0 space-y-6">
+            <h2 id="line-status-title" className="flex items-start gap-3 text-xl leading-snug font-semibold text-balance text-ink">
+              <Icon className={clsx('mt-1 size-5 shrink-0', STATUS_TEXT[health.tone])} aria-hidden />
+              {health.title}
+            </h2>
+            <div>
+              <p className="flex flex-wrap items-baseline gap-x-2.5">
+                <span className="tnum text-display font-semibold text-ink">
+                  <AnimatedNumber value={result.outputPerDay} format={(v) => formatNumber(v, 0)} countUpOnMount />
+                </span>
+                <span className="text-heading text-muted">изделий в сутки</span>
+              </p>
+              <p className="mt-3 text-sm text-muted">
+                {behind ? 'Выполнено ' : 'План выполнен на '}
+                <span className={clsx('tnum font-semibold', behind ? 'text-crit' : 'text-ok')}>{formatPercent(result.planAttainment, 0)}</span>
+                {behind ? ` плана · не хватает ${formatNumber(result.plannedOutputPerDay - result.outputPerDay, 0)} шт` : ''}
+              </p>
+            </div>
           </div>
           <Link
             to={health.tone === 'normal' ? '/twin' : `/twin?stage=${constraintDef.id}`}
-            className="group inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover"
+            className="group inline-flex items-center gap-1 text-sm font-medium whitespace-nowrap text-accent hover:text-accent-hover"
           >
-            {health.tone === 'normal' ? 'Открыть схему линии' : `Открыть участок на схеме · загрузка ${formatPercent(constraint.utilization)}`}
+            {health.tone === 'normal' ? 'Открыть схему линии' : 'Открыть на схеме'}
             <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>
-        <div className="hidden min-w-0 lg:block">
+        <div className="mx-auto mt-8 hidden w-full max-w-[1120px] min-w-0 lg:block">
           <LineDiagram result={result} theme="light" onSelect={(id) => navigate(`/twin?stage=${id}`)} className="w-full overflow-visible" />
         </div>
       </div>

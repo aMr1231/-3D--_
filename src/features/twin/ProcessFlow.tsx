@@ -24,10 +24,10 @@ import { StageNode, TerminalNode, type StageFlowNode, type TerminalFlowNode } fr
 /** Раскладка мнемосхемы «змейкой»: верхний ряд слева направо, нижний — справа налево. */
 const LAYOUT: Record<string, { x: number; y: number; target: Position; source: Position; extra?: Position }> = {
   receiving: { x: 268, y: 0, target: Position.Left, source: Position.Right },
-  preparation: { x: 590, y: 0, target: Position.Left, source: Position.Right },
-  machining: { x: 912, y: 0, target: Position.Left, source: Position.Bottom },
-  inspection: { x: 912, y: 280, target: Position.Top, source: Position.Left, extra: Position.Bottom },
-  packaging: { x: 590, y: 280, target: Position.Right, source: Position.Left },
+  preparation: { x: 640, y: 0, target: Position.Left, source: Position.Right },
+  machining: { x: 1012, y: 0, target: Position.Left, source: Position.Bottom },
+  inspection: { x: 1012, y: 280, target: Position.Top, source: Position.Left, extra: Position.Bottom },
+  packaging: { x: 640, y: 280, target: Position.Right, source: Position.Left },
   shipping: { x: 268, y: 280, target: Position.Right, source: Position.Left },
 }
 
@@ -105,7 +105,7 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
       {
         id: 'scrap',
         type: 'terminal',
-        position: { x: 946, y: 520 },
+        position: { x: 1042, y: 520 },
         selectable: false,
         data: {
           kind: 'scrap',

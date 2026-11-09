@@ -50,8 +50,10 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
                 <tr key={def.id} className={clsx('border-b border-line last:border-0', highlight === def.id && 'bg-accent-soft/60')}>
                   <td className="tnum py-3 pr-2 pl-5 text-meta text-faint md:pl-6">{idx + 1}</td>
                   <td className="px-3 py-3">
-                    <span className="font-medium text-ink">{def.shortName}</span>
-                    <StatusIndicator status={s.status} className="mt-1 text-meta" />
+                    <div className="flex flex-col items-start gap-1">
+                      <span className="font-medium whitespace-nowrap text-ink">{def.shortName}</span>
+                      <StatusIndicator status={s.status} className="text-meta" />
+                    </div>
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-3">

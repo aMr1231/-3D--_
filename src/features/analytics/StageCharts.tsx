@@ -37,12 +37,12 @@ export function CapacityChart({ result, highlight }: StageChartProps) {
         />
       }
       chart={
-        <div className="h-[240px]">
+        <div className="h-[280px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ top: 8, right: 4, left: -16, bottom: 0 }} barGap={2} barCategoryGap="28%">
-              <CartesianGrid vertical={false} stroke={CHART.grid} />
-              <XAxis dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} interval={0} />
-              <YAxis tick={AXIS_TICK} tickLine={false} axisLine={false} width={44} />
+            <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, left: 0, bottom: 0 }} barGap={2} barCategoryGap="24%">
+              <CartesianGrid horizontal={false} stroke={CHART.grid} />
+              <XAxis type="number" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} />
+              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={116} />
               <Tooltip
                 cursor={{ fill: 'rgb(16 24 32 / 0.04)' }}
                 content={(props) => {
@@ -61,12 +61,12 @@ export function CapacityChart({ result, highlight }: StageChartProps) {
                   )
                 }}
               />
-              <Bar dataKey="capacity" fill={CHART.primarySoft} radius={[3, 3, 0, 0]} maxBarSize={22} isAnimationActive={false}>
+              <Bar dataKey="capacity" fill={CHART.primarySoft} radius={[0, 3, 3, 0]} maxBarSize={14} isAnimationActive={false}>
                 {data.map((d) => (
                   <Cell key={d.id} fillOpacity={dim(highlight, d.id)} />
                 ))}
               </Bar>
-              <Bar dataKey="processed" fill={CHART.primary} radius={[3, 3, 0, 0]} maxBarSize={22} isAnimationActive={false}>
+              <Bar dataKey="processed" fill={CHART.primary} radius={[0, 3, 3, 0]} maxBarSize={14} isAnimationActive={false}>
                 {data.map((d) => (
                   <Cell key={d.id} fillOpacity={dim(highlight, d.id)} />
                 ))}
@@ -109,7 +109,7 @@ export function UtilizationChart({ result, highlight }: StageChartProps) {
             <BarChart data={data} layout="vertical" margin={{ top: 4, right: 36, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
               <XAxis type="number" domain={[0, 1]} ticks={[0, 0.25, 0.5, 0.75, 1]} tickFormatter={(v: number) => formatPercent(v)} tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} />
-              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={92} />
+              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={116} />
               <ReferenceLine x={0.85} stroke={CHART.warn} strokeDasharray="3 3" />
               <ReferenceLine x={0.95} stroke={CHART.crit} strokeDasharray="3 3" />
               <Tooltip
@@ -182,7 +182,7 @@ export function CycleBreakdownChart({ result, highlight }: StageChartProps) {
             <BarChart data={data} layout="vertical" margin={{ top: 4, right: 12, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
               <XAxis type="number" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} мин`} />
-              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={92} />
+              <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={116} />
               <Tooltip
                 cursor={{ fill: 'rgb(16 24 32 / 0.04)' }}
                 content={(props) => {

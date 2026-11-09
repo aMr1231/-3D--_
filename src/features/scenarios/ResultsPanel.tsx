@@ -92,8 +92,7 @@ export function ResultsPanel({ base, calculation, stale, running, scenarioName, 
           <caption className="sr-only">Базовый сценарий и изменённый сценарий</caption>
           <thead>
             <tr className="border-b border-line text-xs text-muted">
-              <th scope="col" className="py-2.5 pr-2 text-left font-medium">Показатель</th>
-              <th scope="col" className="px-2 py-2.5 text-right font-medium">База</th>
+              <th scope="col" className="py-2.5 pr-3 text-left font-medium">Показатель</th>
               <th scope="col" className="px-2 py-2.5 text-right font-medium">Сценарий</th>
               <th scope="col" className="py-2.5 pl-2 text-right font-medium">Изменение</th>
             </tr>
@@ -103,14 +102,16 @@ export function ResultsPanel({ base, calculation, stale, running, scenarioName, 
               const def = METRICS[d.key]
               return (
                 <tr key={d.key} className="border-b border-line last:border-0">
-                  <th scope="row" className="py-2.5 pr-2 text-left font-normal text-ink-2">
+                  <th scope="row" className="py-3 pr-3 text-left align-top font-normal text-ink-2">
                     {def.short}
                   </th>
-                  <td className="tnum px-2 py-2.5 text-right whitespace-nowrap text-muted">{def.format(d.base)}</td>
-                  <td className="tnum px-2 py-2.5 text-right font-medium whitespace-nowrap text-ink">
-                    <AnimatedNumber value={d.value} format={def.format} />
+                  <td className="tnum px-2 py-3 text-right align-top whitespace-nowrap">
+                    <span className="block font-medium text-ink">
+                      <AnimatedNumber value={d.value} format={def.format} />
+                    </span>
+                    <span className="mt-0.5 block text-xs text-faint">было {def.format(d.base)}</span>
                   </td>
-                  <td className="py-2.5 pl-2 text-right">
+                  <td className="py-3 pl-2 text-right align-top whitespace-nowrap">
                     <span key={calculation.ranAt} className={d.verdict === 'same' ? undefined : 'change-flash inline-block rounded px-1'}>
                       <Delta delta={d} showShare={false} />
                     </span>

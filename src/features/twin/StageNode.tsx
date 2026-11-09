@@ -52,7 +52,9 @@ export function StageNode({ data }: NodeProps<StageFlowNode>) {
         </div>
       )}
       <div className="flex items-center justify-between gap-2 px-4 pt-3.5">
-        <p className="truncate text-sm font-semibold text-ink">{def.name}</p>
+        <p className="truncate text-sm font-semibold text-ink" title={def.name}>
+          {def.shortName}
+        </p>
         <Icon className={clsx('size-4 shrink-0', STATUS_TEXT[s.status])} aria-hidden />
       </div>
 

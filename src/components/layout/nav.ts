@@ -13,7 +13,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: 'Обзор производства', shortLabel: 'Обзор', icon: LayoutDashboard, roles: ['manager'], group: 'production' },
+  { to: '/', label: 'Обзор', shortLabel: 'Обзор', icon: LayoutDashboard, roles: ['manager'], group: 'production' },
   { to: '/twin', label: 'Цифровой двойник', shortLabel: 'Двойник', icon: Workflow, roles: ['manager'], group: 'production' },
   { to: '/scenarios', label: 'Сценарии', shortLabel: 'Сценарии', icon: SlidersHorizontal, roles: ['manager'], group: 'production' },
   { to: '/analytics', label: 'Аналитика', shortLabel: 'Аналитика', icon: ChartColumn, roles: ['manager'], group: 'production' },
