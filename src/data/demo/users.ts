@@ -1,7 +1,7 @@
 /**
  * Подсказки для экрана входа: демо-учётки, которые сервер создаёт при первом запуске
- * (server/db.ts → SEED_USERS). Проверка паролей выполняется только на сервере.
- * Отключить демо-учётки: переменная окружения TWINLINE_SEED_DEMO=0.
+ * (backend/database/seeders/DatabaseSeeder.php). Проверка паролей выполняется только на сервере.
+ * Отключить демо-учётки: TWINLINE_SEED_DEMO=false в backend/.env.
  */
 import type { Role } from '@/domain/types'
 

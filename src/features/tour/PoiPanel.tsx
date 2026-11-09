@@ -56,7 +56,8 @@ export function PoiPanel({ poi, result, scenarioName, canOpenTwin, routeMode, on
       open
       onClose={onClose}
       label={`Точка интереса: ${poi.title}`}
-      className="max-md:!max-h-[48dvh]"
+      compactMobile
+      onSwipe={routeMode ? onStep : undefined}
       eyebrow={
         <>
           <span className="text-2xs font-medium text-muted">

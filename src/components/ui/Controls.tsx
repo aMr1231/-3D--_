@@ -54,7 +54,7 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(o.value)}
             className={clsx(
               'inline-flex items-center gap-1.5 rounded-[4px] font-medium transition-colors [&_svg]:size-3.5',
-              size === 'sm' ? 'h-6 px-2 text-xs' : 'h-7 px-2.5 text-13',
+              size === 'sm' ? 'h-6 px-2 text-xs pointer-coarse:h-9 pointer-coarse:px-3' : 'h-7 px-2.5 text-13 pointer-coarse:h-10',
               active ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(16_24_32/0.08),0_0_0_1px_rgb(16_24_32/0.06)]' : 'text-muted hover:text-ink',
             )}
           >
@@ -79,7 +79,7 @@ export function Select({ className, size = 'md', children, ...rest }: SelectProp
       <select
         className={clsx(
           'w-full appearance-none rounded-md border border-line-strong bg-surface pr-7 pl-2.5 font-medium text-ink hover:border-[#c4cad1]',
-          size === 'sm' ? 'h-7 text-xs' : 'h-8 text-13',
+          size === 'sm' ? 'h-7 text-xs pointer-coarse:h-10' : 'h-8 text-13 pointer-coarse:h-11',
         )}
         {...rest}
       >
@@ -177,14 +177,14 @@ export function ParamField({
         )}
         <div
           className={clsx(
-            'flex h-7 shrink-0 items-center rounded-[5px] border bg-surface',
+            'flex h-7 shrink-0 items-center rounded-[5px] border bg-surface pointer-coarse:h-10',
             changed ? 'border-accent-line bg-accent-soft/50' : 'border-line-strong',
-            showSlider ? 'w-[104px]' : 'w-full',
+            showSlider ? 'w-[104px] pointer-coarse:w-[132px]' : 'w-full',
           )}
         >
           <button
             type="button"
-            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40"
+            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
             onClick={() => onChange(clamp(roundToStep(value - step, step), min, max))}
             disabled={value <= min}
             aria-label={`Уменьшить: ${label}`}
@@ -219,7 +219,7 @@ export function ParamField({
           )}
           <button
             type="button"
-            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40"
+            className="flex h-full w-6 items-center justify-center text-faint hover:text-ink disabled:opacity-40 pointer-coarse:w-9"
             onClick={() => onChange(clamp(roundToStep(value + step, step), min, max))}
             disabled={value >= max}
             aria-label={`Увеличить: ${label}`}

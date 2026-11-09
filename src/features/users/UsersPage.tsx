@@ -10,6 +10,7 @@ import { ROLE_ACCESS, ROLE_LABEL, type Role } from '@/domain/types'
 import { ApiError, api } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
 import { toast } from '@/store/toast'
+import { AuditLog } from './AuditLog'
 
 interface UserListItem {
   id: number
@@ -167,6 +168,8 @@ export default function UsersPage() {
       <p className="text-xs text-muted">
         Хранятся только логин, хеш пароля, роль и дата регистрации. Смена роли и удаление действуют сразу — без повторного входа.
       </p>
+
+      <AuditLog />
 
       <ConfirmDialog
         open={toDelete !== null}

@@ -95,7 +95,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
       return
     }
     updateScenario(scenario.id, { params: draft })
-    toast.success('Сценарий сохранён', `«${scenario.name}» обновлён в хранилище браузера.`)
+    toast.success('Сценарий сохранён', `«${scenario.name}» обновлён на сервере.`)
   }
 
   const showOnTwin = () => {
@@ -248,7 +248,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
             toast.success('Сценарий переименован')
           } else {
             const created = createScenario({ name, description, params: draft })
-            toast.success('Сценарий создан', `«${created.name}» сохранён в браузере.`)
+            toast.success('Сценарий создан', `«${created.name}» сохранён на сервере и доступен другим руководителям.`)
             onOpenScenario(created.id, true)
           }
           setNameDialog(null)
@@ -258,7 +258,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
       <ConfirmDialog
         open={confirmDelete}
         title="Удалить сценарий?"
-        description={<>Сценарий «{scenario.name}» будет удалён из этого браузера. Записи в журнале расчётов сохранятся.</>}
+        description={<>Сценарий «{scenario.name}» будет удалён на сервере для всех руководителей. Записи в журнале расчётов сохранятся.</>}
         confirmLabel="Удалить"
         tone="danger"
         onCancel={() => setConfirmDelete(false)}

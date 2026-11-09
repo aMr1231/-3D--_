@@ -2,7 +2,6 @@ import { useEffect, type CSSProperties } from 'react'
 import { Outlet, useNavigation } from 'react-router'
 import { useAuthStore } from '@/store/auth'
 import { useScenarioStore } from '@/store/scenarios'
-import { toast } from '@/store/toast'
 import { Toaster } from '../ui/Toaster'
 import { MobileTabBar } from './MobileTabBar'
 import { NAV_ITEMS } from './nav'
@@ -12,19 +11,16 @@ import { Topbar } from './Topbar'
 export function AppShell() {
   const navigation = useNavigation()
   const role = useAuthStore((s) => s.user?.role ?? 'guest')
-  const storageRecovered = useScenarioStore((s) => s.storageRecovered)
-  const acknowledgeRecovery = useScenarioStore((s) => s.acknowledgeRecovery)
+  const userId = useAuthStore((s) => s.user?.id)
+  const loadScenarios = useScenarioStore((s) => s.load)
+  const clearScenarios = useScenarioStore((s) => s.clear)
   const hasTabBar = NAV_ITEMS.filter((i) => i.roles.includes(role) && !i.desktopOnly).length > 1
 
+  // Сценарии и журнал прогонов хранятся на сервере: загружаем для руководителя, очищаем при смене пользователя.
   useEffect(() => {
-    if (storageRecovered) {
-      toast.error(
-        'Сохранённые сценарии повреждены',
-        'Некорректные записи в хранилище браузера пропущены, базовые данные восстановлены.',
-      )
-      acknowledgeRecovery()
-    }
-  }, [storageRecovered, acknowledgeRecovery])
+    if (userId && role === 'manager') void loadScenarios()
+    return () => clearScenarios()
+  }, [userId, role, loadScenarios, clearScenarios])
 
   return (
     <div className="flex h-dvh overflow-hidden" style={{ '--tabbar-h': hasTabBar ? '56px' : '0px' } as CSSProperties}>

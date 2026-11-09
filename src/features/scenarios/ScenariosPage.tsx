@@ -118,15 +118,13 @@ export default function ScenariosPage() {
       <ConfirmDialog
         open={confirmReset}
         title="Сбросить демо-сценарии?"
-        description="Свои сценарии и журнал расчётов будут удалены из браузера, демонстрационные сценарии — восстановлены."
+        description="Все сценарии и журнал расчётов будут удалены на сервере для всех руководителей, демонстрационные сценарии — восстановлены."
         confirmLabel="Сбросить"
         tone="danger"
         onCancel={() => setConfirmReset(false)}
         onConfirm={() => {
           setConfirmReset(false)
-          resetDemo()
-          toast.info('Демо-данные восстановлены')
-          go(BASELINE_SCENARIO_ID)
+          void resetDemo().then(() => go(BASELINE_SCENARIO_ID))
         }}
       />
     </div>

@@ -3,7 +3,6 @@ import { AppShell } from '@/components/layout/AppShell'
 import { PageSkeleton } from '@/components/ui/Feedback'
 import LoginPage from '@/features/auth/LoginPage'
 import { RequireAuth } from '@/features/auth/RequireAuth'
-import DashboardPage from '@/features/dashboard/DashboardPage'
 import { NotFoundPage, RouteError } from '@/features/system/RouteError'
 
 /** Ленивая загрузка тяжёлых разделов (React Flow, Recharts, Three.js) отдельными чанками. */
@@ -28,11 +27,16 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: (
-              <RequireAuth roles={['manager']}>
-                <DashboardPage />
-              </RequireAuth>
-            ),
+            lazy: async () => {
+              const { default: DashboardPage } = await import('@/features/dashboard/DashboardPage')
+              return {
+                element: (
+                  <RequireAuth roles={['manager']}>
+                    <DashboardPage />
+                  </RequireAuth>
+                ),
+              }
+            },
           },
           {
             path: 'twin',

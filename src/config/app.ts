@@ -30,5 +30,5 @@ export const MODEL = {
 
 /** Ключи localStorage / sessionStorage. Версия меняется при несовместимой смене схемы. */
 export const STORAGE_KEYS = {
-  scenarios: 'twinline.scenarios',
+  activeScenario: 'twinline.active-scenario',
 } as const
