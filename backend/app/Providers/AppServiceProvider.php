@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Каналы реального времени (авторизация подписок по серверной сессии).
+        require base_path('routes/channels.php');
     }
 }

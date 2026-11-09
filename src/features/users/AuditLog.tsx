@@ -5,6 +5,7 @@ import { EmptyState, ErrorState, Skeleton } from '@/components/ui/Feedback'
 import { Panel } from '@/components/ui/Panel'
 import { formatDateTime } from '@/domain/format'
 import { ApiError, api } from '@/lib/api'
+import { useRealtimeStore } from '@/store/realtime'
 
 interface Entry {
   id: number
@@ -46,6 +47,12 @@ export function AuditLog() {
   useEffect(() => {
     void load()
   }, [load])
+
+  // Новые записи приходят в реальном времени (событие audit.recorded).
+  const auditVersion = useRealtimeStore((s) => s.auditVersion)
+  useEffect(() => {
+    if (auditVersion > 0) void load()
+  }, [auditVersion, load])
 
   return (
     <Panel

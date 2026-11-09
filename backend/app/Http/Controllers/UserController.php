@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserChanged;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Support\Realtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -39,6 +41,7 @@ class UserController extends Controller
         $previous = $user->role;
         $user->update(['role' => $data['role']]);
         AuditLog::record($request, 'role_changed', "{$user->login}: {$previous} → {$data['role']}");
+        Realtime::send(new UserChanged('role', $user->id, $user->login, $user->role, $request->user()->login));
 
         return response()->json(['user' => $user->toPublic()]);
     }
@@ -53,8 +56,10 @@ class UserController extends Controller
         }
         DB::table('sessions')->where('user_id', $user->id)->delete();
         $login = $user->login;
+        $id = $user->id;
         $user->delete();
         AuditLog::record($request, 'user_deleted', $login);
+        Realtime::send(new UserChanged('deleted', $id, $login, null, $request->user()->login));
 
         return response()->noContent();
     }

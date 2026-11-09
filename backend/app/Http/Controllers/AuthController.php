@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserChanged;
 use App\Http\Requests\PasswordChangeRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\AuditLog;
 use App\Models\User;
+use App\Support\Realtime;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -42,6 +44,7 @@ class AuthController extends Controller
         Auth::login($user);
         $request->session()->regenerate();
         AuditLog::record($request, 'register', $user->login, $user);
+        Realtime::send(new UserChanged('registered', $user->id, $user->login, $user->role, null));
 
         return response()->json(['user' => $user->toPublic()], 201);
     }
@@ -107,6 +110,8 @@ class AuthController extends Controller
             ->delete();
         $request->session()->regenerate();
         AuditLog::record($request, 'password_changed');
+        // Другие вкладки и устройства этого пользователя сразу узнают, что их сессии завершены.
+        Realtime::send(new UserChanged('password', $user->id, $user->login, $user->role, $user->login));
 
         return response()->noContent();
     }

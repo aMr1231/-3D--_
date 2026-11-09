@@ -9,6 +9,7 @@ import { formatDateTime } from '@/domain/format'
 import { ROLE_ACCESS, ROLE_LABEL, type Role } from '@/domain/types'
 import { ApiError, api } from '@/lib/api'
 import { useAuthStore } from '@/store/auth'
+import { useRealtimeStore } from '@/store/realtime'
 import { toast } from '@/store/toast'
 import { AuditLog } from './AuditLog'
 
@@ -40,6 +41,13 @@ export default function UsersPage() {
   useEffect(() => {
     void load()
   }, [load])
+
+  // Регистрации, смена ролей и удаления другими руководителями — без кнопки «Обновить».
+  const usersVersion = useRealtimeStore((s) => s.usersVersion)
+  const online = useRealtimeStore((s) => s.members)
+  useEffect(() => {
+    if (usersVersion > 0) void load()
+  }, [usersVersion, load])
 
   const changeRole = async (u: UserListItem, role: Role) => {
     setBusyId(u.id)
@@ -126,6 +134,11 @@ export default function UsersPage() {
                       <th scope="row" className="px-4 py-2.5 text-left font-medium text-ink">
                         <span className="font-mono text-13">{u.login}</span>
                         {self && <span className="ml-2 rounded-[3px] bg-accent-soft px-1.5 py-px text-2xs font-normal text-accent">вы</span>}
+                        {online.some((m) => m.id === u.id) && (
+                          <span className="ml-2 inline-flex items-center gap-1 text-2xs font-normal text-ok">
+                            <span className="size-1.5 rounded-full bg-ok" aria-hidden />в сети
+                          </span>
+                        )}
                       </th>
                       <td className="px-3 py-2">
                         <Select

@@ -7,6 +7,9 @@ flowchart LR
   B[Браузер] -->|HTTPS| N[nginx: TLS, gzip/brotli, кеш статики]
   N -->|/app/assets/* — файлы| S[(backend/public/app)]
   N -->|остальное| P[PHP-FPM: Laravel 13]
+  N -->|/app — WebSocket| R[Laravel Reverb :8080]
+  P -->|события| R
+  L[twinline:live] -->|живая смена| R
   P --> D[(SQLite / MySQL / PostgreSQL)]
 ```
 
@@ -33,6 +36,9 @@ php artisan optimize                        # кеш конфигурации, �
 | `TWINLINE_SEED_DEMO` | `false` | Не создавать демо-учётки с короткими паролями |
 | `DB_CONNECTION` | `pgsql` или `mysql` | Рабочая СУБД вместо SQLite |
 | `BCRYPT_ROUNDS` | `12` | Стоимость хеширования паролей |
+| `REVERB_APP_KEY` / `REVERB_APP_SECRET` | свои случайные значения | Ключ и секрет приложения Reverb |
+| `REVERB_HOST` / `REVERB_PORT` / `REVERB_SCHEME` | `twin.example.ru` / `443` / `https` | Адрес WebSocket для браузера (через nginx, `wss://`) |
+| `REVERB_SERVER_HOST` / `REVERB_SERVER_PORT` | `127.0.0.1` / `8080` | Где слушает сам Reverb (только локально) |
 
 ## 8.3. nginx
 
@@ -54,6 +60,16 @@ server {
         expires 1y;
         add_header Cache-Control "public, immutable";
         try_files $uri =404;
+    }
+
+    # WebSocket Reverb: wss://twin.example.ru/app/...
+    location /app {
+        proxy_http_version 1.1;
+        proxy_set_header Host $http_host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_read_timeout 120s;
+        proxy_pass http://127.0.0.1:8080;
     }
 
     location / {
@@ -101,3 +117,24 @@ expose_php=Off
 ## 8.6. Резервное копирование
 
 SQLite — копирование файла `backend/database/database.sqlite` при остановленной записи (или `sqlite3 .backup`). MySQL/PostgreSQL — штатные `mysqldump` / `pg_dump` по расписанию. В базе нет персональных данных, кроме логинов и IP-адресов в журнале действий и сессиях.
+
+## 8.7. Реальное время (Reverb)
+
+Кроме PHP-FPM постоянно работают два процесса — WebSocket-сервер и поток живой смены. Пример для supervisor:
+
+```ini
+[program:twinline-reverb]
+command=php /var/www/twinline/backend/artisan reverb:start
+autorestart=true
+user=www-data
+
+[program:twinline-live]
+command=php /var/www/twinline/backend/artisan twinline:live
+autorestart=true
+user=www-data
+```
+
+- После `php artisan optimize` изменения `.env` применяются только после повторного `optimize`.
+- В `config/reverb.php` для эксплуатации стоит ограничить `allowed_origins` доменом приложения.
+- Поток живой смены синтетический; на реальном предприятии вместо него — источник данных цеха (вне рамок ТЗ: ERP/MES не подключаются).
+- Если Reverb не запущен, приложение работает: блок «Линия сейчас» показывает «Нет связи», изменения других пользователей видны после обновления страницы.

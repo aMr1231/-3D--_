@@ -33,4 +33,22 @@ return [
         'max_scenarios' => 200,
         'max_runs' => 500,
     ],
+
+    // Живая смена (php artisan twinline:live): синтетический поток данных о работе линии.
+    'live' => [
+        'tick_seconds' => (float) env('TWINLINE_LIVE_TICK_SECONDS', 2),
+        'minutes_per_tick' => 2,        // ускорение: 2 мин смены за шаг
+        'day_start_minute' => 7 * 60,   // начало первой смены — 07:00
+        'plan_per_hour' => 22,          // план выпуска, шт/ч
+        'cache_store' => 'file',        // последний срез для новых клиентов (не база: пишется каждые 2 с)
+        // Коэффициент готовности и выход годных — как в модели линии (src/data/demo/enterprise.ts).
+        'stages' => [
+            'receiving' => ['availability' => 0.95, 'yield' => 1, 'initial_queue' => 2],
+            'preparation' => ['availability' => 0.92, 'yield' => 1, 'initial_queue' => 2],
+            'machining' => ['availability' => 0.88, 'yield' => 1, 'initial_queue' => 6],
+            'inspection' => ['availability' => 0.94, 'yield' => 0.97, 'initial_queue' => 2],
+            'packaging' => ['availability' => 0.96, 'yield' => 1, 'initial_queue' => 1],
+            'shipping' => ['availability' => 0.95, 'yield' => 1, 'initial_queue' => 0],
+        ],
+    ],
 ];

@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RealtimeController;
 use App\Http\Controllers\ScenarioController;
 use App\Http\Controllers\SpaController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +21,12 @@ Route::prefix('api')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('auth/me', [AuthController::class, 'me']);
         Route::post('auth/password', [AuthController::class, 'password']);
+
+        // Реальное время: настройки подключения к Reverb, текущий срез смены, авторизация каналов.
+        Route::get('realtime', [RealtimeController::class, 'config']);
+        Route::get('live', [RealtimeController::class, 'live']);
     });
+    Broadcast::routes(['middleware' => ['auth']]);
 
     Route::middleware(['auth', 'role:manager'])->group(function () {
         Route::get('users', [UserController::class, 'index']);

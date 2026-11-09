@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ScenariosChanged;
 use App\Http\Requests\RunRequest;
 use App\Http\Requests\ScenarioRequest;
 use App\Models\AuditLog;
 use App\Models\Scenario;
 use App\Models\ScenarioRun;
+use App\Support\Realtime;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,6 +43,7 @@ class ScenarioController extends Controller
             'created_by' => $request->user()->id,
         ]);
         AuditLog::record($request, 'scenario_created', $scenario->name);
+        $this->notify($request, 'scenario', 'created', $scenario->name);
 
         return response()->json(['scenario' => $scenario->toApi()], 201);
     }
@@ -52,6 +55,7 @@ class ScenarioController extends Controller
             'description' => (string) $request->validated('description'),
             'params' => $request->cleanParams(),
         ]);
+        $this->notify($request, 'scenario', 'updated', $scenario->name);
 
         return response()->json(['scenario' => $scenario->toApi()]);
     }
@@ -61,6 +65,7 @@ class ScenarioController extends Controller
         $name = $scenario->name;
         $scenario->delete();
         AuditLog::record($request, 'scenario_deleted', $name);
+        $this->notify($request, 'scenario', 'deleted', $name);
 
         return response()->noContent();
     }
@@ -76,6 +81,7 @@ class ScenarioController extends Controller
             }
         });
         AuditLog::record($request, 'scenarios_reset');
+        $this->notify($request, 'scenario', 'reset');
 
         return $this->index();
     }
@@ -100,6 +106,8 @@ class ScenarioController extends Controller
             ScenarioRun::query()->whereIn('id', $stale)->delete();
         }
 
+        $this->notify($request, 'runs', 'recorded', $run->scenario_name);
+
         return response()->json(['run' => $run->toApi()], 201);
     }
 
@@ -107,7 +115,14 @@ class ScenarioController extends Controller
     {
         ScenarioRun::query()->delete();
         AuditLog::record($request, 'runs_cleared');
+        $this->notify($request, 'runs', 'cleared');
 
         return response()->noContent();
+    }
+
+    /** Другим руководителям — сигнал перечитать сценарии (себе не отправляется: X-Socket-ID). */
+    private function notify(Request $request, string $kind, string $action, ?string $name = null): void
+    {
+        Realtime::send(new ScenariosChanged($kind, $action, $name, $request->user()?->login));
     }
 }

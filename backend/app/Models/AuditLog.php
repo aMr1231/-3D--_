@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\AuditRecorded;
+use App\Support\Realtime;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -22,7 +24,7 @@ class AuditLog extends Model
     public static function record(Request $request, string $action, ?string $subject = null, ?User $actor = null, ?string $login = null): void
     {
         $actor ??= $request->user();
-        static::create([
+        $entry = static::create([
             'user_id' => $actor?->id,
             'login' => $actor?->login ?? $login,
             'action' => $action,
@@ -30,6 +32,7 @@ class AuditLog extends Model
             'ip' => $request->ip(),
             'created_at' => now(),
         ]);
+        Realtime::send(new AuditRecorded($entry->toApi()), toOthers: false);
     }
 
     public function toApi(): array

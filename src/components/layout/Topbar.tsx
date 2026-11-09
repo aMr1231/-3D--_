@@ -8,6 +8,7 @@ import { ENTERPRISE } from '@/data/demo/enterprise'
 import { useAuthStore } from '@/store/auth'
 import { Popover } from '../ui/Popover'
 import { BrandMark, BrandName } from './Brand'
+import { OnlineIndicator } from './OnlineIndicator'
 
 export function Topbar() {
   const user = useAuthStore((s) => s.user)
@@ -31,6 +32,7 @@ export function Topbar() {
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
+        <OnlineIndicator />
         <Popover
           label="О демонстрационных данных"
           className="w-[300px] p-3.5"
@@ -51,7 +53,8 @@ export function Topbar() {
           <p className="text-13 font-semibold text-ink">Демонстрационный режим</p>
           <ul className="mt-2 space-y-1.5 text-xs text-muted">
             <li>Предприятие, процессы и показатели — синтетические, внутренне согласованные данные.</li>
-            <li>Все метрики вычисляются моделью линии в браузере, случайных значений нет.</li>
+            <li>Метрики двойника и сценариев вычисляет модель линии в браузере, случайных значений нет.</li>
+            <li>«Линия сейчас» — синтетический поток с сервера: случайные поступления, отказы и ремонты.</li>
             <li>Интеграции с ERP, MES и 1С не используются.</li>
             <li>Сценарии и журнал расчётов хранятся на сервере (Laravel) и общие для руководителей.</li>
           </ul>

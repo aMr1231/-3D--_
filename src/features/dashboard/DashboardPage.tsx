@@ -9,6 +9,7 @@ import { BASELINE_RESULT } from '@/hooks/useSimulation'
 import { OnboardingTour } from '@/features/onboarding/OnboardingTour'
 import { IssuesList } from './IssuesList'
 import { KpiStrip } from './KpiStrip'
+import { LiveLine } from './LiveLine'
 import { LineStatus } from './LineStatus'
 import { PerformanceTrend } from './PerformanceTrend'
 import { RecentRuns } from './RecentRuns'
@@ -48,6 +49,8 @@ export default function DashboardPage() {
       <div data-tour="line">
         <LineStatus result={result} />
       </div>
+
+      <LiveLine />
 
       <div className="flex flex-wrap items-center gap-3">
         <span className="text-xs text-muted">Период истории</span>

@@ -22,11 +22,20 @@ function readCookie(name: string): string | null {
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
+let socketIdProvider: () => string | undefined = () => undefined
+
+/** Идентификатор WebSocket-соединения (Reverb) для заголовка X-Socket-ID: сервер не шлёт автору его же событие. */
+export function setSocketIdProvider(provider: () => string | undefined) {
+  socketIdProvider = provider
+}
+
 async function send(method: Method, path: string, body?: unknown): Promise<Response> {
   const headers: Record<string, string> = { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
   const xsrf = readCookie('XSRF-TOKEN')
   if (xsrf && method !== 'GET') headers['X-XSRF-TOKEN'] = xsrf
+  const socketId = socketIdProvider()
+  if (socketId) headers['X-Socket-ID'] = socketId
   return fetch(path, {
     method,
     credentials: 'same-origin',

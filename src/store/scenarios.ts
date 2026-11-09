@@ -67,6 +67,8 @@ interface ScenarioState {
   status: LoadStatus
   /** Загрузить сценарии и журнал прогонов с сервера (только для руководителя). */
   load: () => Promise<void>
+  /** Перечитать данные без индикатора загрузки — после изменений другого руководителя. */
+  refresh: () => Promise<void>
   /** Сбросить локальное состояние (при выходе из системы). */
   clear: () => void
   createScenario: (input: { name: string; description: string; params: ScenarioParams }) => Scenario
@@ -107,6 +109,15 @@ export const useScenarioStore = create<ScenarioState>()(
           } catch (e) {
             set({ status: 'error' })
             toast.error('Сценарии не загружены', e instanceof ApiError ? e.message : undefined)
+          }
+        },
+
+        refresh: async () => {
+          if (get().status !== 'ready') return
+          try {
+            apply(await api<ServerData>('GET', '/api/scenarios'))
+          } catch {
+            // Не критично: данные обновятся при следующей загрузке страницы.
           }
         },
 

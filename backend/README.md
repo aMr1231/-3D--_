@@ -6,7 +6,7 @@ API авторизации, ролей, пользователей, сценар
 
 ```bash
 npm run setup   # composer install, .env, ключ, база с демо-данными
-npm run dev     # Laravel на :8000 + Vite на :5173
+npm run dev     # Laravel на :8000, Reverb на :8080, живая смена, Vite на :5173
 npm run test:api
 ```
 
@@ -16,6 +16,7 @@ npm run test:api
 - контроллеры — `app/Http/Controllers`, проверка данных — `app/Http/Requests`;
 - middleware — `EnsureRole` (`role:manager`), `SecurityHeaders` (CSP и другие заголовки);
 - настройки модели линии и ограничений — `config/twinline.php`;
-- демо-данные — `database/seeders/DatabaseSeeder.php` (отключение: `TWINLINE_SEED_DEMO=false`).
+- демо-данные — `database/seeders/DatabaseSeeder.php` (отключение: `TWINLINE_SEED_DEMO=false`);
+- реальное время — события `app/Events`, каналы `routes/channels.php`, отправка `app/Support/Realtime.php`, живая смена — `app/Live/LineSimulator.php` и команда `php artisan twinline:live`.
 
 Подробности — `../docs/02-architecture.md` (раздел 2.9) и `../docs/08-deployment.md`.

@@ -1,6 +1,7 @@
 import { useEffect, type CSSProperties } from 'react'
 import { Outlet, useNavigation } from 'react-router'
 import { useAuthStore } from '@/store/auth'
+import { useRealtimeConnection } from '@/store/realtime'
 import { useScenarioStore } from '@/store/scenarios'
 import { Toaster } from '../ui/Toaster'
 import { MobileTabBar } from './MobileTabBar'
@@ -15,6 +16,8 @@ export function AppShell() {
   const loadScenarios = useScenarioStore((s) => s.load)
   const clearScenarios = useScenarioStore((s) => s.clear)
   const hasTabBar = NAV_ITEMS.filter((i) => i.roles.includes(role) && !i.desktopOnly).length > 1
+
+  useRealtimeConnection()
 
   // Сценарии и журнал прогонов хранятся на сервере: загружаем для руководителя, очищаем при смене пользователя.
   useEffect(() => {
