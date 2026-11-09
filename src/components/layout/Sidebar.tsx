@@ -70,17 +70,6 @@ export function Sidebar() {
           </div>
         ))}
       </div>
-
-      <div className="hidden border-t border-white/[0.06] px-4 py-3 xl:block">
-        <p className="flex items-center gap-1.5 text-xs text-graphite-ink">
-          <span className="size-1.5 rounded-full bg-[#d4952b]" aria-hidden />
-          Демонстрационные данные
-        </p>
-        <p className="mt-1 text-2xs leading-4 text-graphite-muted">
-          Синтетическая модель предприятия. Интеграции с ERP, MES и 1С не используются.
-        </p>
-        <p className="mt-2 text-2xs text-graphite-muted/70">{APP.version}</p>
-      </div>
     </nav>
   )
 }
