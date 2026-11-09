@@ -7,9 +7,9 @@ import { usePrefersReducedMotion } from '@/hooks/useMediaQuery'
 import { STATUS_HEX } from './ui/Status'
 
 /* Геометрия (единицы viewBox). */
-const NODE_W = 95
+const NODE_W = 102
 const NODE_H = 68
-const GAP = 14
+const GAP = 12
 const TOP = 8
 const MID = TOP + NODE_H / 2
 const VIEW_W = STAGES.length * NODE_W + (STAGES.length - 1) * GAP
@@ -130,13 +130,13 @@ export function LineDiagram({ result: r, theme, onSelect, className }: LineDiagr
               strokeWidth={focused === i ? 2.2 : flagged ? 1.4 : 1}
               className="line-node-box"
             />
-            <text x={x + 11} y={TOP + 25} fill={c.name} fontSize={11.5} fontWeight={500} letterSpacing={-0.1} fontFamily="Inter Variable, sans-serif">
+            <text x={x + NODE_W / 2} y={TOP + 25} textAnchor="middle" fill={c.name} fontSize={11.5} fontWeight={500} letterSpacing={-0.1} fontFamily="Inter Variable, sans-serif">
               {s.shortName}
             </text>
-            <rect x={x + 11} y={TOP + 47} width={40} height={3} rx={1.5} fill={c.track} />
-            <rect x={x + 11} y={TOP + 47} width={40 * Math.min(st.utilization, 1)} height={3} rx={1.5} fill={color} />
+            <rect x={x + 12} y={TOP + 47} width={44} height={3} rx={1.5} fill={c.track} />
+            <rect x={x + 12} y={TOP + 47} width={44 * Math.min(st.utilization, 1)} height={3} rx={1.5} fill={color} />
             <text
-              x={x + NODE_W - 11}
+              x={x + NODE_W - 12}
               y={TOP + 52}
               textAnchor="end"
               fill={c.pct}
