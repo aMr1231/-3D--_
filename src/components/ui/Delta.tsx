@@ -36,7 +36,7 @@ export function Delta({ delta, showShare = true, showAbsolute = true, className 
       : null
   return (
     <span
-      className={clsx('tnum inline-flex items-center gap-0.5 text-13 font-medium whitespace-nowrap', VERDICT_CLASS[delta.verdict], className)}
+      className={clsx('tnum inline-flex items-center gap-0.5 text-meta font-medium whitespace-nowrap', VERDICT_CLASS[delta.verdict], className)}
       title={VERDICT_LABEL[delta.verdict]}
     >
       <Icon className="size-4" aria-hidden />

@@ -19,10 +19,10 @@ interface ChartTooltipBoxProps {
 export function ChartTooltipBox({ title, rows, footer }: ChartTooltipBoxProps) {
   return (
     <div className="min-w-[188px] rounded-lg border border-line bg-surface px-3 py-2.5 shadow-overlay">
-      <p className="mb-1.5 text-13 font-medium text-muted">{title}</p>
+      <p className="mb-1.5 text-meta font-medium text-muted">{title}</p>
       <ul className="space-y-1">
         {rows.map((r) => (
-          <li key={r.key} className="flex items-center gap-2 text-13">
+          <li key={r.key} className="flex items-center gap-2 text-meta">
             <span
               className={r.shape === 'rect' ? 'size-2 rounded-[2px]' : 'h-0.5 w-3 rounded-full'}
               style={{ backgroundColor: r.color }}
@@ -47,7 +47,7 @@ export interface RechartsTooltipProps<T> {
 
 export function ChartLegend({ items }: { items: { label: string; color: string; shape?: 'line' | 'rect' | 'dash' }[] }) {
   return (
-    <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 text-13 text-muted">
+    <ul className="flex flex-wrap items-center gap-x-5 gap-y-1 text-meta text-muted">
       {items.map((i) => (
         <li key={i.label} className="flex items-center gap-1.5">
           {i.shape === 'rect' ? (

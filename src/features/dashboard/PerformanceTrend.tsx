@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { TriangleExclamationPoint } from 'lucide-react'
 import { Area, CartesianGrid, ComposedChart, Line, ReferenceDot, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { ChartFrame, DataTable } from '@/components/charts/ChartFrame'
@@ -16,7 +17,7 @@ interface Point {
   event?: string
 }
 
-export function PerformanceTrend({ history }: { history: HistoryDay[] }) {
+export function PerformanceTrend({ history, actions }: { history: HistoryDay[]; actions?: ReactNode }) {
   const data: Point[] = history.map((d) => ({
     date: d.date,
     label: formatDate(d.date),
@@ -34,6 +35,7 @@ export function PerformanceTrend({ history }: { history: HistoryDay[] }) {
   return (
     <ChartFrame
       title="Динамика выпуска"
+      actions={actions}
       legend={
         <ChartLegend
           items={[

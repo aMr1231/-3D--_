@@ -15,7 +15,7 @@ export function PageSkeleton({ variant = 'page' }: { variant?: 'page' | 'canvas'
           <div className="relative h-0.5 overflow-hidden rounded bg-line">
             <div className="absolute inset-y-0 w-1/3 animate-progress bg-accent" />
           </div>
-          <p className="text-13 text-muted">Загрузка раздела…</p>
+          <p className="text-meta text-muted">Загрузка раздела…</p>
         </div>
       </div>
     )
@@ -45,7 +45,7 @@ export function EmptyState({ icon, title, description, action, className }: Empt
     <div className={clsx('flex flex-col items-center justify-center px-6 py-12 text-center', className)}>
       {icon && <div className="mb-3 flex size-10 items-center justify-center rounded-full bg-subtle text-muted [&_svg]:size-[18px]">{icon}</div>}
       <p className="text-sm font-medium text-ink">{title}</p>
-      {description && <p className="mt-1 max-w-[340px] text-13 text-muted">{description}</p>}
+      {description && <p className="mt-1 max-w-[340px] text-meta text-muted">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   )
@@ -64,8 +64,8 @@ export function ErrorState({ title, description, actions, className }: ErrorStat
       <div className="mb-3 flex size-10 items-center justify-center rounded-full bg-crit-soft text-crit">
         <CircleX className="size-[18px]" />
       </div>
-      <p className="text-15 font-semibold text-ink">{title}</p>
-      {description && <div className="mt-1 max-w-[420px] text-13 text-muted">{description}</div>}
+      <p className="text-heading font-semibold text-ink">{title}</p>
+      {description && <div className="mt-1 max-w-[420px] text-meta text-muted">{description}</div>}
       {actions && <div className="mt-5 flex flex-wrap justify-center gap-2">{actions}</div>}
     </div>
   )

@@ -32,7 +32,7 @@ export function OnlineIndicator() {
       aria-controls="info-drawer"
       aria-expanded={infoOpen}
       title={label}
-      className="inline-flex h-9 items-center gap-2 rounded-lg px-2.5 text-13 font-medium text-muted hover:bg-subtle hover:text-ink pointer-coarse:h-11"
+      className="inline-flex h-9 items-center gap-2 rounded-lg px-2.5 text-meta font-medium text-muted hover:bg-subtle hover:text-ink pointer-coarse:h-11"
     >
       <span className="relative flex size-2">
         {live && <span className="absolute inline-flex size-full rounded-full bg-ok opacity-50 motion-safe:animate-ping" />}

@@ -122,7 +122,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {changes > 0 && (
-              <span className="mr-1 text-13 text-muted" aria-live="polite">
+              <span className="mr-1 text-meta text-muted" aria-live="polite">
                 {changes} {plural(changes, { one: 'изменение', few: 'изменения', many: 'изменений' })}
                 {!isBaseline && dirty ? ' · не сохранено' : ''}
               </span>
@@ -216,7 +216,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
           aria-label="Результаты расчёта"
           className={clsx('scrollbar-thin h-full overflow-y-auto border-line bg-surface px-5 py-6 md:px-6 lg:border-l', mobileTab !== 'results' && 'hidden lg:block')}
         >
-          <h2 className="mb-4 text-15 font-semibold text-ink">Сравнение с базовым режимом</h2>
+          <h2 className="mb-4 text-heading font-semibold text-ink">Сравнение с базовым режимом</h2>
           <ResultsPanel
             base={BASELINE_RESULT}
             calculation={calculation}

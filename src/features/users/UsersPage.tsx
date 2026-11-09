@@ -123,7 +123,7 @@ export default function UsersPage() {
               <caption className="sr-only">Пользователи системы</caption>
               <thead>
                 <tr className="border-b border-line text-left text-xs text-muted">
-                  <th scope="col" className="py-3 pr-2 pl-4 font-medium sm:px-5 md:px-6">Логин</th>
+                  <th scope="col" className="py-3 pr-1 pl-4 font-medium sm:px-5 md:px-6">Логин</th>
                   <th scope="col" className="px-2 py-3 font-medium sm:px-3">Роль</th>
                   <th scope="col" className="hidden px-3 py-3 font-medium sm:table-cell">Зарегистрирован</th>
                   <th scope="col" className="px-5 py-3 md:px-6"><span className="sr-only">Действия</span></th>
@@ -134,7 +134,7 @@ export default function UsersPage() {
                   const self = u.id === me?.id
                   return (
                     <tr key={u.id} className="border-b border-line last:border-0">
-                      <th scope="row" className="py-3 pr-2 pl-4 text-left font-medium text-ink sm:px-5 md:px-6">
+                      <th scope="row" className="py-3 pr-1 pl-4 text-left font-medium text-ink sm:px-5 md:px-6">
                         <span className="inline-flex items-center gap-2">
                           {online.some((m) => m.id === u.id) ? (
                             <span className="size-2 shrink-0 rounded-full bg-ok" title="В сети">
@@ -161,8 +161,8 @@ export default function UsersPage() {
                           <option value="guest">Гость</option>
                         </Select>
                       </td>
-                      <td className="tnum hidden px-3 py-3 text-13 text-muted sm:table-cell">{formatDateTime(u.createdAt)}</td>
-                      <td className="py-2 pr-2 pl-1 text-right sm:px-5 md:px-6">
+                      <td className="tnum hidden px-3 py-3 text-meta text-muted sm:table-cell">{formatDateTime(u.createdAt)}</td>
+                      <td className="py-2 pr-2 pl-0 text-right sm:px-5 md:px-6">
                         <Button
                           size="xs"
                           variant="ghost"

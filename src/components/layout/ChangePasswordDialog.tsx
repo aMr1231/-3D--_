@@ -60,7 +60,7 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
           ] as const
         ).map(([key, label, value, setter, auto, errField]) => (
           <div key={key} className="space-y-1.5">
-            <label htmlFor={ids[key]} className="text-13 font-medium text-ink-2">
+            <label htmlFor={ids[key]} className="text-meta font-medium text-ink-2">
               {label}
             </label>
             <input
@@ -78,9 +78,9 @@ export function ChangePasswordDialog({ open, onClose }: { open: boolean; onClose
             />
           </div>
         ))}
-        <p className="text-13 text-muted">Не короче 8 символов, буквы и цифры, без логина.</p>
+        <p className="text-meta text-muted">Не короче 8 символов, буквы и цифры, без логина.</p>
         {error && (
-          <p id={ids.error} role="alert" className="text-13 text-crit">
+          <p id={ids.error} role="alert" className="text-meta text-crit">
             {error.text}
           </p>
         )}

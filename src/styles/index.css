@@ -5,22 +5,29 @@
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', Consolas, monospace;
 
   /*
-   * Шкала текста. Минимум 12 px (text-xs) — только для чипов, осей графиков и шапок таблиц;
-   * вторичный текст — 13 px, основной — 14 px. Мельче 12 px в интерфейсе ничего нет.
+   * Шкала текста — крупная и спокойная:
+   * xs 13 px — только чипы, оси графиков и шапки таблиц;
+   * meta 14 px — подписи и вторичный текст; sm 15 px — основной текст;
+   * heading 17 px — заголовки блоков; title 30 px — заголовок страницы;
+   * kpi 32 px — ключевые цифры; display 56 px — главная цифра.
    */
-  --text-13: 0.8125rem;
-  --text-13--line-height: 1.25rem;
-  --text-15: 0.9375rem;
-  --text-15--line-height: 1.375rem;
-  --text-title: 1.5rem;
-  --text-title--line-height: 2rem;
-  --text-title--letter-spacing: -0.018em;
-  --text-kpi: 1.75rem;
-  --text-kpi--line-height: 2rem;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
+  --text-meta: 0.875rem;
+  --text-meta--line-height: 1.375rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5rem;
+  --text-heading: 1.0625rem;
+  --text-heading--line-height: 1.5rem;
+  --text-title: 1.875rem;
+  --text-title--line-height: 2.25rem;
+  --text-title--letter-spacing: -0.022em;
+  --text-kpi: 2rem;
+  --text-kpi--line-height: 2.25rem;
   --text-kpi--letter-spacing: -0.025em;
-  --text-display: 2.75rem;
+  --text-display: 3.5rem;
   --text-display--line-height: 1;
-  --text-display--letter-spacing: -0.035em;
+  --text-display--letter-spacing: -0.04em;
 
   /* Поверхности: спокойная нейтральная гамма */
   --color-canvas: #f7f7f8;
@@ -36,12 +43,8 @@
   --color-muted: #6b6b73;
   --color-faint: #8b8b94;
 
-  /* Графит — только для витрины страницы входа */
+  /* Графит — тёмные метки точек интереса в 3D-туре */
   --color-graphite: #14171a;
-  --color-graphite-2: #1c2024;
-  --color-graphite-3: #292e33;
-  --color-graphite-ink: #c5cad1;
-  --color-graphite-muted: #7d848d;
 
   /* Акцент */
   --color-accent: #17708a;
@@ -120,7 +123,7 @@
   }
   body {
     @apply bg-canvas text-ink font-sans antialiased;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
   }

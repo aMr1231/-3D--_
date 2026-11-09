@@ -18,7 +18,7 @@ interface StageListProps {
 export function StageList({ result, layer, selectedStageId, onSelect }: StageListProps) {
   return (
     <ol className="mx-auto max-w-[560px] px-4 py-6" aria-label="Участки линии по ходу процесса">
-      <li className="flex items-center justify-between rounded-xl border border-dashed border-line-strong px-4 py-3 text-13">
+      <li className="flex items-center justify-between rounded-xl border border-dashed border-line-strong px-4 py-3 text-meta">
         <span className="text-muted">Запуск в производство</span>
         <span className="tnum font-semibold text-ink">{formatNumber(result.params.loadPerHour, 1)} шт/ч</span>
       </li>
@@ -31,7 +31,7 @@ export function StageList({ result, layer, selectedStageId, onSelect }: StageLis
             <div className="flex items-center justify-center gap-1 py-1.5 text-faint" aria-hidden>
               <ArrowDown className="size-4" />
               {s.queueLength >= 1 && (
-                <span className={clsx('text-13', s.status === 'bottleneck' ? 'text-crit' : 'text-muted')}>очередь {formatNumber(s.queueLength, 0)} шт</span>
+                <span className={clsx('text-meta', s.status === 'bottleneck' ? 'text-crit' : 'text-muted')}>очередь {formatNumber(s.queueLength, 0)} шт</span>
               )}
             </div>
             <button
@@ -46,7 +46,7 @@ export function StageList({ result, layer, selectedStageId, onSelect }: StageLis
             >
               <div className="flex items-center justify-between gap-2">
                 <span className="truncate text-sm font-semibold text-ink">{def.name}</span>
-                <span className={clsx('flex shrink-0 items-center gap-1 text-13 font-medium', STATUS_TEXT[s.status])}>
+                <span className={clsx('flex shrink-0 items-center gap-1 text-meta font-medium', STATUS_TEXT[s.status])}>
                   <Icon className="size-4" aria-hidden /> {STATUS_META[s.status].short}
                 </span>
               </div>
@@ -58,7 +58,7 @@ export function StageList({ result, layer, selectedStageId, onSelect }: StageLis
           </li>
         )
       })}
-      <li className="mt-3 flex items-center justify-between rounded-xl border border-dashed border-line-strong px-4 py-3 text-13">
+      <li className="mt-3 flex items-center justify-between rounded-xl border border-dashed border-line-strong px-4 py-3 text-meta">
         <span className="text-muted">Отгрузка заказчикам</span>
         <span className="tnum font-semibold text-ink">{formatNumber(result.outputPerDay, 0)} шт/сут</span>
       </li>

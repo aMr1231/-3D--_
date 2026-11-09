@@ -72,7 +72,7 @@ export function Topbar() {
               <>
                 <div className="px-2.5 pt-1.5 pb-2">
                   <p className="text-sm font-medium text-ink">{user.login}</p>
-                  <p className="mt-0.5 text-13 text-muted">{ROLE_LABEL[user.role]}</p>
+                  <p className="mt-0.5 text-meta text-muted">{ROLE_LABEL[user.role]}</p>
                 </div>
                 <div className="my-1 h-px bg-line" />
                 {user.role === 'manager' && (

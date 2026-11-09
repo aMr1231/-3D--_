@@ -59,7 +59,7 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
       onSwipe={routeMode ? onStep : undefined}
       eyebrow={s && canOpenTwin ? <StatusIndicator status={s.status} variant="pill" /> : undefined}
       title={poi.title}
-      headerExtra={<p className="text-13 text-muted">{poi.subtitle}</p>}
+      headerExtra={<p className="text-meta text-muted">{poi.subtitle}</p>}
       footer={
         <div className="space-y-3">
           {poi.stageId && canOpenTwin && (
@@ -80,7 +80,7 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
               <Button size="sm" variant="ghost" icon={<ChevronLeft />} onClick={() => onStep(-1)} disabled={index <= 0}>
                 Назад
               </Button>
-              <span className="tnum text-13 text-muted">
+              <span className="tnum text-meta text-muted">
                 Остановка {index + 1} из {TOUR_ROUTE.stops.length}
               </span>
               <Button size="sm" variant="secondary" onClick={() => onStep(1)} disabled={index >= TOUR_ROUTE.stops.length - 1}>
@@ -96,7 +96,7 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
 
         {s && metrics.length > 0 && (
           <section aria-labelledby="poi-metrics">
-            <h3 id="poi-metrics" className="text-13 font-semibold text-ink-2">
+            <h3 id="poi-metrics" className="text-meta font-semibold text-ink-2">
               Показатели участка
             </h3>
             <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-4">
@@ -105,8 +105,8 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
                 if (!v) return null
                 return (
                   <div key={m} className="min-w-0">
-                    <dt className="truncate text-13 text-muted">{v.label}</dt>
-                    <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{v.value}</dd>
+                    <dt className="truncate text-meta text-muted">{v.label}</dt>
+                    <dd className="tnum mt-0.5 text-heading font-semibold text-ink">{v.value}</dd>
                   </div>
                 )
               })}
@@ -116,22 +116,22 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
 
         {!poi.stageId && (
           <section>
-            <h3 className="text-13 font-semibold text-ink-2">Линия сегодня</h3>
+            <h3 className="text-meta font-semibold text-ink-2">Линия сегодня</h3>
             <dl className="mt-3 grid grid-cols-2 gap-x-4">
               <div>
-                <dt className="text-13 text-muted">Выпуск</dt>
-                <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{formatNumber(result.outputPerDay, 0)} шт/сут</dd>
+                <dt className="text-meta text-muted">Выпуск</dt>
+                <dd className="tnum mt-0.5 text-heading font-semibold text-ink">{formatNumber(result.outputPerDay, 0)} шт/сут</dd>
               </div>
               <div>
-                <dt className="text-13 text-muted">Время цикла</dt>
-                <dd className="tnum mt-0.5 text-15 font-semibold text-ink">{formatDuration(result.cycleTimeMin)}</dd>
+                <dt className="text-meta text-muted">Время цикла</dt>
+                <dd className="tnum mt-0.5 text-heading font-semibold text-ink">{formatDuration(result.cycleTimeMin)}</dd>
               </div>
             </dl>
           </section>
         )}
 
         <section>
-          <h3 className="text-13 font-semibold text-ink-2">Факты</h3>
+          <h3 className="text-meta font-semibold text-ink-2">Факты</h3>
           <ul className="mt-2 space-y-1.5 text-sm text-ink-2">
             {poi.facts.map((f) => (
               <li key={f} className="flex gap-2.5">
@@ -144,13 +144,13 @@ export function PoiPanel({ poi, result, canOpenTwin, routeMode, onClose, onStep 
 
         {c && (
           <section aria-labelledby={`case-${c.id}`} className="rounded-lg bg-subtle p-4">
-            <h3 id={`case-${c.id}`} className="text-13 font-semibold text-ink-2">
+            <h3 id={`case-${c.id}`} className="text-meta font-semibold text-ink-2">
               Лучшая практика
             </h3>
             <div className="mt-2 space-y-2">
               <p className="text-sm font-medium text-ink">{c.title}</p>
-              <p className="text-13 text-muted">{c.summary}</p>
-              <div className="flex items-center gap-2 pt-1 text-13">
+              <p className="text-meta text-muted">{c.summary}</p>
+              <div className="flex items-center gap-2 pt-1 text-meta">
                 <span className="text-muted">{c.metric.label}</span>
                 <span className="ml-auto tnum text-muted line-through decoration-faint">
                   {formatNumber(c.metric.before, c.metric.before % 1 ? 1 : 0)} {c.metric.unit}

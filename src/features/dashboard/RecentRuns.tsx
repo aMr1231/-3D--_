@@ -44,12 +44,12 @@ export function RecentRuns() {
               <>
                 <div className="flex items-baseline justify-between gap-3">
                   <span className="truncate text-sm font-medium text-ink">{run.scenarioName}</span>
-                  <span className="shrink-0 text-13 text-faint">
+                  <span className="shrink-0 text-meta text-faint">
                     {formatRelative(run.ranAt)}
                     {!exists && ' · удалён'}
                   </span>
                 </div>
-                <dl className="mt-2 grid grid-cols-3 gap-3 text-13 text-muted">
+                <dl className="mt-2 grid grid-cols-3 gap-3 text-meta text-muted">
                   {[
                     ['Цикл', deltas[0]],
                     ['Выпуск', deltas[1]],

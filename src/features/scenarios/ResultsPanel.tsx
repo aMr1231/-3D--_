@@ -62,7 +62,7 @@ export function ResultsPanel({ base, calculation, stale, running, scenarioName, 
       </p>
 
       {stale && (
-        <div className="flex items-center gap-3 rounded-lg bg-warn-soft px-4 py-3 text-13 text-warn">
+        <div className="flex items-center gap-3 rounded-lg bg-warn-soft px-4 py-3 text-meta text-warn">
           <TriangleExclamationPoint className="size-4 shrink-0" aria-hidden />
           <span className="flex-1">Параметры изменены после расчёта — результаты устарели.</span>
           <Button size="xs" variant="secondary" onClick={onRun} loading={running}>
@@ -88,7 +88,7 @@ export function ResultsPanel({ base, calculation, stale, running, scenarioName, 
       <LineCompare base={base} alt={r} runKey={calculation.ranAt} />
 
       <section aria-label="Сравнение показателей">
-        <table className="w-full text-13">
+        <table className="w-full text-meta">
           <caption className="sr-only">Базовый сценарий и изменённый сценарий</caption>
           <thead>
             <tr className="border-b border-line text-xs text-muted">

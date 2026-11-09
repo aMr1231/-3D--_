@@ -12,7 +12,7 @@ export function PageInfo({ title, children }: { title: string; children: ReactNo
   if (!slot) return null
   return createPortal(
     <div className="space-y-8">
-      <p className="text-13 font-medium text-faint">{title}</p>
+      <p className="text-meta font-medium text-faint">{title}</p>
       {children}
     </div>,
     slot,
@@ -24,7 +24,7 @@ export function InfoSection({ id, title, children, className }: { id?: string; t
   return (
     <section id={id ? `info-${id}` : undefined} className={clsx('scroll-mt-4', className)}>
       <h3 className="text-sm font-semibold text-ink">{title}</h3>
-      <div className="mt-3 space-y-3 text-13 leading-relaxed text-muted">{children}</div>
+      <div className="mt-3 space-y-3 text-meta leading-relaxed text-muted">{children}</div>
     </section>
   )
 }

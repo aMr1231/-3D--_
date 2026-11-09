@@ -76,7 +76,7 @@ export function AuditLog() {
         <EmptyState icon={<History />} title="Записей пока нет" />
       ) : (
         <div className="scrollbar-thin max-h-[440px] overflow-auto pb-2">
-          <table className="w-full min-w-[600px] text-13">
+          <table className="w-full min-w-[600px] text-meta">
             <caption className="sr-only">Журнал действий</caption>
             <thead className="sticky top-0 bg-surface">
               <tr className="border-b border-line text-left text-xs text-muted">

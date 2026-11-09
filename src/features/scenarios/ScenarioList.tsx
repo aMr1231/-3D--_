@@ -28,7 +28,7 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center justify-between gap-2 px-4 pt-5 pb-3">
-        <h2 className="text-15 font-semibold text-ink">Сценарии</h2>
+        <h2 className="text-heading font-semibold text-ink">Сценарии</h2>
         <div className="flex items-center gap-1">
           <Button size="xs" variant="secondary" icon={<Plus />} onClick={onCreate}>
             Новый
@@ -42,9 +42,9 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
       <nav aria-label="Список сценариев" className="scrollbar-thin flex-1 space-y-6 overflow-y-auto px-2 pt-2 pb-6">
         {groups.map((g) => (
           <div key={g.title}>
-            <p className="px-2.5 pb-1.5 text-13 font-medium text-faint">{g.title}</p>
+            <p className="px-2.5 pb-1.5 text-meta font-medium text-faint">{g.title}</p>
             {g.items.length === 0 ? (
-              <p className="px-2.5 py-1 text-13 text-muted">Пока нет — нажмите «Новый».</p>
+              <p className="px-2.5 py-1 text-meta text-muted">Пока нет — нажмите «Новый».</p>
             ) : (
               <ul className="space-y-0.5">
                 {g.items.map((s) => {
@@ -70,7 +70,7 @@ export function ScenarioList({ scenarios, selectedId, dirty, onSelect, onCreate,
                           {s.kind === 'baseline' && !(active && dirty) && <Lock className="size-3.5 shrink-0 text-faint" aria-label="Только чтение" />}
                         </span>
                         {s.kind !== 'baseline' && (
-                          <span className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-13 text-muted">
+                          <span className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-meta text-muted">
                             <span className="flex items-center gap-1">
                               выпуск <Delta delta={dOut} showAbsolute={false} />
                             </span>

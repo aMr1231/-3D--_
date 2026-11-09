@@ -54,7 +54,7 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(o.value)}
             className={clsx(
               'inline-flex items-center justify-center gap-1.5 rounded-md font-medium transition-colors [&_svg]:size-4',
-              size === 'sm' ? 'h-7 px-2.5 text-13 pointer-coarse:h-9 pointer-coarse:px-3' : 'h-8 px-3 text-sm pointer-coarse:h-10',
+              size === 'sm' ? 'h-7 px-2.5 text-meta pointer-coarse:h-9 pointer-coarse:px-3' : 'h-8 px-3 text-sm pointer-coarse:h-10',
               active ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(17_17_19/0.08)]' : 'text-muted hover:text-ink',
             )}
           >
@@ -79,7 +79,7 @@ export function Select({ className, size = 'md', children, ...rest }: SelectProp
       <select
         className={clsx(
           'w-full appearance-none truncate rounded-lg border border-line-strong bg-surface pr-8 pl-3 font-medium text-ink hover:border-faint/60',
-          size === 'sm' ? 'h-8 text-13 pointer-coarse:h-10' : 'h-9 text-sm pointer-coarse:h-11',
+          size === 'sm' ? 'h-8 text-meta pointer-coarse:h-10' : 'h-9 text-sm pointer-coarse:h-11',
         )}
         {...rest}
       >
@@ -150,7 +150,7 @@ export function ParamField({
   return (
     <div className={clsx('min-w-0', compact ? 'space-y-1.5' : 'space-y-2')}>
       <div className="flex items-baseline justify-between gap-2">
-        <label htmlFor={id} className="truncate text-13 text-muted">
+        <label htmlFor={id} className="truncate text-meta text-muted">
           {label}
         </label>
         {changed && baseValue !== undefined && (
@@ -193,7 +193,7 @@ export function ParamField({
           <input
             id={id}
             inputMode="decimal"
-            className="tnum h-full w-full min-w-0 bg-transparent text-center text-13 font-medium text-ink outline-none"
+            className="tnum h-full w-full min-w-0 bg-transparent text-center text-meta font-medium text-ink outline-none"
             value={text}
             onChange={(e) => setText(e.target.value)}
             onBlur={(e) => commit(e.target.value)}

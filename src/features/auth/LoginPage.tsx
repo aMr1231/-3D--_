@@ -1,25 +1,59 @@
 import clsx from 'clsx'
-import { ArrowRight, ChevronDown, Cuboid, LayoutDashboard, Lock, UserPlus } from 'lucide-react'
-import { useId, useState, type FormEvent } from 'react'
+import { ChevronDown, Cuboid, Eye, EyeOff, LayoutDashboard } from 'lucide-react'
+import { useId, useState, type FormEvent, type InputHTMLAttributes } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router'
-import { BrandMark, BrandName } from '@/components/layout/Brand'
+import { BrandMark } from '@/components/layout/Brand'
 import { Button } from '@/components/ui/Button'
-import { SegmentedControl } from '@/components/ui/Controls'
 import { APP } from '@/config/app'
 import { ENTERPRISE } from '@/data/demo/enterprise'
 import { DEMO_ACCOUNTS } from '@/data/demo/users'
 import { ROLE_LABEL } from '@/domain/types'
 import { homePathFor, useAuthStore, type AuthResult } from '@/store/auth'
-import { LoginShowcase } from './LoginShowcase'
 
 type Mode = 'login' | 'register'
 
 const inputClass = (invalid: boolean) =>
   clsx(
-    'h-10 w-full rounded-lg border bg-surface px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent-line',
+    'h-11 w-full rounded-xl border bg-surface px-3.5 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-accent focus:ring-4 focus:ring-accent-line/60',
     invalid ? 'border-crit' : 'border-line-strong',
   )
 
+/** Поле ввода с подписью и необязательной подсказкой под ним. */
+function Field({ id, label, hint, hintId, children }: { id: string; label: string; hint?: string; hintId?: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-2">
+      <label htmlFor={id} className="block text-meta font-medium text-ink-2">
+        {label}
+      </label>
+      {children}
+      {hint && (
+        <p id={hintId} className="text-meta text-muted">
+          {hint}
+        </p>
+      )}
+    </div>
+  )
+}
+
+/** Пароль с кнопкой «показать». */
+function PasswordInput({ invalid, ...rest }: InputHTMLAttributes<HTMLInputElement> & { invalid: boolean }) {
+  const [visible, setVisible] = useState(false)
+  return (
+    <div className="relative">
+      <input {...rest} type={visible ? 'text' : 'password'} className={clsx(inputClass(invalid), 'pr-11')} />
+      <button
+        type="button"
+        onClick={() => setVisible((v) => !v)}
+        aria-label={visible ? 'Скрыть пароль' : 'Показать пароль'}
+        className="absolute inset-y-0 right-0 flex w-11 items-center justify-center text-faint hover:text-ink"
+      >
+        {visible ? <EyeOff className="size-[18px]" aria-hidden /> : <Eye className="size-[18px]" aria-hidden />}
+      </button>
+    </div>
+  )
+}
+
+/** Вход и регистрация: одна спокойная колонка по центру, демо-доступ — двумя крупными кнопками. */
 export default function LoginPage() {
   const user = useAuthStore((s) => s.user)
   const connectionError = useAuthStore((s) => s.connectionError)
@@ -81,163 +115,143 @@ export default function LoginPage() {
   }
 
   const invalid = (field: string) => !!error && (!error.field || error.field === field)
+  const describedBy = (...ids: (string | false)[]) => ids.filter(Boolean).join(' ') || undefined
 
   return (
-    <div className="grid min-h-dvh bg-surface lg:grid-cols-[minmax(440px,1fr)_minmax(0,1.15fr)]">
-      <div className="flex flex-col px-5 py-6 sm:px-10 lg:px-14">
-        <div className="flex items-center gap-2.5">
-          <BrandMark className="size-8" tone="light" />
-          <BrandName className="text-ink" />
-        </div>
+    <div className="flex min-h-dvh flex-col bg-canvas">
+      <main className="flex flex-1 items-center justify-center px-5 py-12 sm:py-16">
+        <div className="w-full max-w-[420px]">
+          <div className="flex flex-col items-center text-center">
+            <BrandMark className="size-12" tone="light" />
+            <h1 className="mt-6 text-title font-semibold text-ink">{mode === 'login' ? `Вход в ${APP.name}` : 'Регистрация'}</h1>
+            <p className="mt-2 text-sm text-muted">Цифровой двойник производства · {ENTERPRISE.name}</p>
+          </div>
 
-        <div className="mx-auto flex w-full max-w-[380px] flex-1 flex-col justify-center py-12">
-          <h1 className="text-title font-semibold text-ink">{mode === 'login' ? 'Вход в систему' : 'Регистрация'}</h1>
-          <p className="mt-1.5 text-sm text-muted">{ENTERPRISE.name}</p>
+          <div className="mt-8 rounded-2xl border border-line bg-surface p-6 sm:p-8">
+            {connectionError && (
+              <p role="alert" className="mb-6 rounded-xl bg-warn-soft px-4 py-3 text-meta text-warn">
+                {connectionError}
+              </p>
+            )}
 
-          <SegmentedControl
-            className="mt-6 flex w-full [&>button]:flex-1 [&>button]:justify-center"
-            size="md"
-            label="Вход или регистрация"
-            value={mode}
-            onChange={switchMode}
-            options={[
-              { value: 'login', label: 'Вход' },
-              { value: 'register', label: 'Регистрация' },
-            ]}
-          />
+            <form onSubmit={onSubmit} className="space-y-5" noValidate>
+              <Field id={loginId} label="Логин" hint={mode === 'register' ? '3–32 латинские буквы или цифры' : undefined} hintId={loginHintId}>
+                <input
+                  id={loginId}
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  value={loginValue}
+                  onChange={(e) => {
+                    setLoginValue(e.target.value)
+                    setError(null)
+                  }}
+                  aria-invalid={invalid('login')}
+                  aria-describedby={describedBy(!!error && errorId, mode === 'register' && loginHintId)}
+                  className={inputClass(invalid('login'))}
+                />
+              </Field>
 
-          {connectionError && (
-            <p role="alert" className="mt-4 rounded-lg bg-warn-soft px-4 py-3 text-13 text-warn">
-              {connectionError}
-            </p>
-          )}
+              <Field id={passwordId} label="Пароль" hint={mode === 'register' ? 'Не короче 8 символов, буквы и цифры' : undefined} hintId={passwordHintId}>
+                <PasswordInput
+                  id={passwordId}
+                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    setError(null)
+                  }}
+                  invalid={invalid('password')}
+                  aria-invalid={invalid('password')}
+                  aria-describedby={describedBy(!!error && errorId, mode === 'register' && passwordHintId)}
+                />
+              </Field>
 
-          <form onSubmit={onSubmit} className="mt-6 space-y-4" noValidate>
-            <div className="space-y-1.5">
-              <label htmlFor={loginId} className="text-13 font-medium text-ink-2">
-                Логин
-              </label>
-              <input
-                id={loginId}
-                autoComplete="username"
-                autoCapitalize="none"
-                spellCheck={false}
-                value={loginValue}
-                onChange={(e) => {
-                  setLoginValue(e.target.value)
-                  setError(null)
-                }}
-                aria-invalid={invalid('login')}
-                aria-describedby={[error ? errorId : '', mode === 'register' ? loginHintId : ''].filter(Boolean).join(' ') || undefined}
-                className={inputClass(invalid('login'))}
-              />
               {mode === 'register' && (
-                <p id={loginHintId} className="text-13 text-muted">
-                  3–32 латинские буквы или цифры
-                </p>
-              )}
-            </div>
-            <div className="space-y-1.5">
-              <label htmlFor={passwordId} className="text-13 font-medium text-ink-2">
-                Пароль
-              </label>
-              <input
-                id={passwordId}
-                type="password"
-                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value)
-                  setError(null)
-                }}
-                aria-invalid={invalid('password')}
-                aria-describedby={[error ? errorId : '', mode === 'register' ? passwordHintId : ''].filter(Boolean).join(' ') || undefined}
-                className={inputClass(invalid('password'))}
-              />
-              {mode === 'register' && (
-                <p id={passwordHintId} className="text-13 text-muted">
-                  От 8 символов, буквы и цифры
-                </p>
-              )}
-            </div>
-            {mode === 'register' && (
-              <>
-                <div className="space-y-1.5">
-                  <label htmlFor={password2Id} className="text-13 font-medium text-ink-2">
-                    Повторите пароль
-                  </label>
-                  <input
+                <Field id={password2Id} label="Повторите пароль">
+                  <PasswordInput
                     id={password2Id}
-                    type="password"
                     autoComplete="new-password"
                     value={password2}
                     onChange={(e) => {
                       setPassword2(e.target.value)
                       setError(null)
                     }}
+                    invalid={invalid('password2')}
                     aria-invalid={invalid('password2')}
                     aria-describedby={error ? errorId : undefined}
-                    className={inputClass(invalid('password2'))}
                   />
-                </div>
-              </>
-            )}
-            {error && (
-              <p id={errorId} role="alert" className="text-13 text-crit">
-                {error.text}
-              </p>
-            )}
-            <Button type="submit" variant="primary" className="h-10 w-full" loading={busy} icon={mode === 'login' ? <Lock /> : <UserPlus />}>
-              {mode === 'login' ? 'Войти' : 'Зарегистрироваться'}
-            </Button>
-          </form>
+                </Field>
+              )}
+
+              {error && (
+                <p id={errorId} role="alert" className="text-meta text-crit">
+                  {error.text}
+                </p>
+              )}
+
+              <Button type="submit" variant="primary" className="h-11 w-full rounded-xl text-sm" loading={busy}>
+                {mode === 'login' ? 'Войти' : 'Зарегистрироваться'}
+              </Button>
+            </form>
+          </div>
 
           {mode === 'login' && (
-            <div className="mt-10">
-              <p className="text-13 font-semibold text-ink-2">Демо-доступ для жюри</p>
-              <div className="mt-3 divide-y divide-line rounded-xl border border-line">
+            <section aria-labelledby="demo-title" className="mt-8">
+              <h2 id="demo-title" className="text-center text-meta text-muted">
+                Быстрый вход для демонстрации
+              </h2>
+              <div className="mt-3 grid grid-cols-2 gap-3">
                 {DEMO_ACCOUNTS.map((a) => (
                   <button
                     key={a.login}
                     type="button"
                     disabled={busy}
                     onClick={() => void run(() => login(a.login, a.password))}
-                    className="group flex w-full items-center gap-3 px-4 py-3 text-left first:rounded-t-xl last:rounded-b-xl hover:bg-subtle disabled:opacity-60"
+                    className="group flex flex-col items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-5 text-center transition-colors hover:border-accent-line hover:bg-accent-soft/40 disabled:opacity-60"
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-subtle text-muted group-hover:text-accent">
-                      {a.role === 'manager' ? <LayoutDashboard className="size-4" /> : <Cuboid className="size-4" />}
+                    <span className="flex size-10 items-center justify-center rounded-full bg-subtle text-muted transition-colors group-hover:bg-surface group-hover:text-accent">
+                      {a.role === 'manager' ? <LayoutDashboard className="size-5" aria-hidden /> : <Cuboid className="size-5" aria-hidden />}
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-medium text-ink">{a.title}</span>
-                      <span className="block font-mono text-13 text-muted">
-                        {a.login} / {a.password}
-                      </span>
+                    <span className="text-sm font-medium text-ink">{a.role === 'manager' ? 'Руководитель' : 'Гость'}</span>
+                    <span className="sr-only">
+                      {a.title}: логин {a.login}, пароль {a.password}
                     </span>
-                    <ArrowRight className="size-4 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
                   </button>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
-          <details className="group mt-8 text-13 text-muted">
-            <summary className="inline-flex cursor-pointer list-none items-center gap-1 font-medium text-ink-2 hover:text-ink [&::-webkit-details-marker]:hidden">
-              Подробнее о доступе и данных
+          <p className="mt-8 text-center text-sm text-muted">
+            {mode === 'login' ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}{' '}
+            <button type="button" onClick={() => switchMode(mode === 'login' ? 'register' : 'login')} className="font-medium text-accent hover:text-accent-hover">
+              {mode === 'login' ? 'Зарегистрироваться' : 'Войти'}
+            </button>
+          </p>
+
+          <details className="group mt-6 text-center text-meta text-muted">
+            <summary className="inline-flex cursor-pointer list-none items-center gap-1 hover:text-ink [&::-webkit-details-marker]:hidden">
+              О доступе и данных
               <ChevronDown className="size-4 transition-transform group-open:rotate-180" aria-hidden />
             </summary>
-            <ul className="mt-3 space-y-2 leading-relaxed">
+            <ul className="mt-4 space-y-2 rounded-2xl border border-line bg-surface p-5 text-left leading-relaxed">
+              <li>
+                Демо-учётки: руководитель — <span className="font-mono text-ink-2">{DEMO_ACCOUNTS[0].login} / {DEMO_ACCOUNTS[0].password}</span>, гость —{' '}
+                <span className="font-mono text-ink-2">
+                  {DEMO_ACCOUNTS[1].login} / {DEMO_ACCOUNTS[1].password}
+                </span>
+                .
+              </li>
+              <li>Руководитель видит все разделы, гость — только 3D-тур.</li>
+              <li>Новые пользователи получают роль «{ROLE_LABEL.guest}»; полный доступ выдаёт руководитель.</li>
               <li>Пароли проверяются на сервере и хранятся только в виде хеша; сессия — в защищённой cookie на 12 часов.</li>
               <li>Собираются только логин и пароль, без ФИО и контактов (152-ФЗ).</li>
-              <li>Новые пользователи получают роль «{ROLE_LABEL.guest}»; полный доступ выдаёт руководитель.</li>
-              <li>
-                Данные предприятия демонстрационные. {APP.name} {APP.version}.
-              </li>
+              <li>Данные предприятия демонстрационные. {APP.name} {APP.version}.</li>
             </ul>
           </details>
         </div>
-      </div>
-
-      <LoginShowcase />
+      </main>
     </div>
   )
 }

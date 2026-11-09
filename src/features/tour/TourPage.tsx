@@ -75,7 +75,7 @@ export default function TourPage() {
   const speedRatio = BASELINE_RESULT.outputPerHour > 0 ? result.outputPerHour / BASELINE_RESULT.outputPerHour : 1
   const fallback = (reason: string) => (
     <div className="scrollbar-thin flex h-full flex-col items-center justify-center gap-5 overflow-auto bg-canvas p-4">
-      <p className="flex max-w-[560px] items-start gap-2 rounded-lg bg-warn-soft px-4 py-3 text-13 text-warn" role="status">
+      <p className="flex max-w-[560px] items-start gap-2 rounded-lg bg-warn-soft px-4 py-3 text-meta text-warn" role="status">
         <TriangleExclamationPoint className="mt-px size-4 shrink-0" aria-hidden />
         {reason} Показан план цеха — точки интереса, метрики и переходы работают так же.
       </p>

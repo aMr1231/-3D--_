@@ -83,7 +83,7 @@ export function InfoDrawer() {
         )}
       >
         <header className="flex shrink-0 items-center justify-between gap-3 px-6 pt-5 pb-2">
-          <h2 className="text-15 font-semibold text-ink">Справка</h2>
+          <h2 className="text-heading font-semibold text-ink">Справка</h2>
           <Button variant="ghost" size="icon-sm" onClick={hide} aria-label="Закрыть справку" className="-mr-2">
             <X />
           </Button>
@@ -95,7 +95,7 @@ export function InfoDrawer() {
           <StagesSection />
           <ConnectionSection />
           <AboutSection />
-          <p className="text-13 text-faint">
+          <p className="text-meta text-faint">
             Клавиша <kbd className="rounded-md border border-line px-1.5 py-0.5 font-sans text-xs text-muted">I</kbd> открывает и
             закрывает справку.
           </p>

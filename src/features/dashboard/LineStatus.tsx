@@ -6,47 +6,53 @@ import { AnimatedNumber } from '@/components/ui/AnimatedNumber'
 import { Meter, STATUS_ICON, STATUS_TEXT } from '@/components/ui/Status'
 import { STAGES, getStage } from '@/data/demo/enterprise'
 import { formatNumber, formatPercent } from '@/domain/format'
-import { lineHealth } from '@/domain/insights'
 import { STATUS_META } from '@/domain/status'
-import type { SimulationResult } from '@/domain/types'
+import type { SimulationResult, StageStatus } from '@/domain/types'
 
-/** Состояние линии: вывод одной фразой, главная цифра выпуска, ограничение и живая мнемосхема. */
+/** Состояние линии простыми словами: что происходит и где узкое место. */
+function headline(result: SimulationResult, constraintName: string): { tone: StageStatus; title: string } {
+  if (result.saturated) return { tone: 'bottleneck', title: 'Линия не успевает выполнить план' }
+  if (result.bottleneckCount > 0) return { tone: 'bottleneck', title: `${constraintName} — узкое место линии` }
+  if (result.riskCount > 0) return { tone: 'high', title: 'Линия работает на пределе' }
+  return { tone: 'normal', title: 'Линия работает нормально' }
+}
+
+/** Главный экран обзора: одна фраза о состоянии, главная цифра выпуска и живая мнемосхема. */
 export function LineStatus({ result }: { result: SimulationResult }) {
-  const health = lineHealth(result)
-  const Icon = STATUS_ICON[health.tone]
   const constraint = result.stages.find((s) => s.stageId === result.constraintStageId)!
   const constraintDef = getStage(constraint.stageId)!
+  const health = headline(result, constraintDef.shortName)
+  const Icon = STATUS_ICON[health.tone]
   const navigate = useNavigate()
   const behind = result.planAttainment < 0.995
 
   return (
-    <section aria-labelledby="line-status-title" className="overflow-hidden rounded-xl border border-line bg-surface">
-      <div className="grid gap-x-12 gap-y-8 p-5 md:p-8 xl:grid-cols-[minmax(260px,300px)_minmax(0,1fr)] xl:items-center">
-        <div className="min-w-0 space-y-7">
-          <h2 id="line-status-title" className="flex items-center gap-2.5 text-15 font-semibold text-ink">
-            <Icon className={clsx('size-5 shrink-0', STATUS_TEXT[health.tone])} aria-hidden />
+    <section aria-labelledby="line-status-title" className="overflow-hidden rounded-2xl border border-line bg-surface">
+      <div className="grid gap-x-12 gap-y-8 p-6 md:p-8 xl:grid-cols-[minmax(280px,340px)_minmax(0,1fr)] xl:items-center">
+        <div className="min-w-0 space-y-8">
+          <h2 id="line-status-title" className="flex items-start gap-3 text-xl leading-snug font-semibold text-ink">
+            <Icon className={clsx('mt-1 size-5 shrink-0', STATUS_TEXT[health.tone])} aria-hidden />
             {health.title}
           </h2>
           <div>
-            <p className="text-13 text-muted">Выпуск за сутки</p>
-            <p className="mt-2 flex items-baseline gap-2">
+            <p className="flex flex-wrap items-baseline gap-x-2.5">
               <span className="tnum text-display font-semibold text-ink">
                 <AnimatedNumber value={result.outputPerDay} format={(v) => formatNumber(v, 0)} countUpOnMount />
               </span>
-              <span className="text-15 text-muted">шт</span>
+              <span className="text-heading text-muted">изделий в сутки</span>
             </p>
-            <p className="tnum mt-3 text-sm text-muted">
-              из {formatNumber(result.plannedOutputPerDay, 0)} по плану ·{' '}
-              <span className={clsx('font-medium', behind ? 'text-crit' : 'text-ok')}>{formatPercent(result.planAttainment, 1)}</span>
+            <p className="mt-3 text-sm text-muted">
+              {behind ? 'Выполнено ' : 'План выполнен на '}
+              <span className={clsx('tnum font-semibold', behind ? 'text-crit' : 'text-ok')}>{formatPercent(result.planAttainment, 0)}</span>
+              {behind ? ` плана · не хватает ${formatNumber(result.plannedOutputPerDay - result.outputPerDay, 0)} шт` : ''}
             </p>
           </div>
           <Link
-            to={`/twin?stage=${constraintDef.id}`}
-            className="group inline-flex items-center gap-1.5 text-sm text-muted hover:text-ink"
+            to={health.tone === 'normal' ? '/twin' : `/twin?stage=${constraintDef.id}`}
+            className="group inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent-hover"
           >
-            Ограничение —<span className="font-medium text-ink-2 group-hover:text-ink">{constraintDef.shortName}</span>
-            <span className={clsx('tnum font-medium', STATUS_TEXT[constraint.status])}>{formatPercent(constraint.utilization)}</span>
-            <ChevronRight className="size-4 text-faint transition-transform group-hover:translate-x-0.5" aria-hidden />
+            {health.tone === 'normal' ? 'Открыть схему линии' : `Открыть участок на схеме · загрузка ${formatPercent(constraint.utilization)}`}
+            <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>
         <div className="hidden min-w-0 lg:block">
@@ -54,18 +60,21 @@ export function LineStatus({ result }: { result: SimulationResult }) {
         </div>
       </div>
 
-      <ol className="scrollbar-thin flex gap-6 overflow-x-auto px-5 pb-5 md:grid md:grid-cols-3 md:gap-y-6 md:overflow-visible md:px-8 md:pb-8 lg:hidden" aria-label="Участки линии по ходу процесса">
+      <ol
+        className="scrollbar-thin flex gap-6 overflow-x-auto px-6 pb-6 md:grid md:grid-cols-3 md:gap-y-6 md:overflow-visible md:px-8 md:pb-8 lg:hidden"
+        aria-label="Участки линии по ходу процесса"
+      >
         {STAGES.map((def, i) => {
           const s = result.stages[i]
           return (
-            <li key={def.id} className="min-w-[112px] flex-1 md:min-w-0">
+            <li key={def.id} className="min-w-[120px] flex-1 md:min-w-0">
               <Link
                 to={`/twin?stage=${def.id}`}
                 className="block space-y-2 py-1"
                 aria-label={`${def.name}: ${STATUS_META[s.status].label}, загрузка ${formatPercent(s.utilization)}. Открыть на схеме`}
               >
-                <p className="truncate text-13 font-medium text-ink">{def.shortName}</p>
-                <p className={clsx('tnum text-sm font-semibold', STATUS_TEXT[s.status])}>{formatPercent(s.utilization)}</p>
+                <p className="truncate text-meta font-medium text-ink">{def.shortName}</p>
+                <p className={clsx('tnum text-heading font-semibold', STATUS_TEXT[s.status])}>{formatPercent(s.utilization)}</p>
                 <Meter value={s.utilization} status={s.status} />
               </Link>
             </li>

@@ -36,6 +36,10 @@ export function AnalyticsInfo({ result, scenarioName, scenarioCount }: Analytics
       <InfoSection id="charts" title="Как читать графики">
         <InfoTerms
           items={[
+            {
+              term: 'Динамика выпуска',
+              text: 'Годные изделия за сутки по рабочим дням. Пунктир — план при заданной нагрузке, красная точка — событие на линии (подробности в подсказке графика). Период переключается справа от заголовка.',
+            },
             { term: 'Производительность по этапам', text: 'Мощность участка и фактически обработанный поток, шт/ч.' },
             { term: 'Загрузка ресурсов', text: 'Цвет — статус участка; пунктир — пороги 85 % и 95 %.' },
             {
@@ -51,6 +55,10 @@ export function AnalyticsInfo({ result, scenarioName, scenarioCount }: Analytics
             {
               term: 'Структура затрат',
               text: `Операционные затраты ${formatRubCompact(result.operatingCostPerDay)}/сут, из них простой ресурсов ${formatRubCompact(result.idleCostPerDay)}.`,
+            },
+            {
+              term: 'Последние расчёты',
+              text: 'Пять последних прогонов сценариев и их изменение к базовому режиму: время цикла, выпуск и себестоимость.',
             },
           ]}
         />

@@ -267,7 +267,7 @@ export function CostStructure({ result, highlight }: StageChartProps) {
         <ul className="space-y-4 pt-1" aria-label="Затраты участков за сутки">
           {rows.map((r) => (
             <li key={r.id} style={{ opacity: dim(highlight, r.id) }}>
-              <div className="mb-1.5 flex items-baseline justify-between text-13">
+              <div className="mb-1.5 flex items-baseline justify-between text-meta">
                 <span className="text-ink-2">{r.name}</span>
                 <span className="tnum font-medium text-ink">{formatRubCompact(r.total)}</span>
               </div>

@@ -48,15 +48,15 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
               const minusOverload = minus.summary && (minus.stageUtilizationAfter >= 0.95 || minus.summary.outputPerDay < result.outputPerDay - 0.5)
               return (
                 <tr key={def.id} className={clsx('border-b border-line last:border-0', highlight === def.id && 'bg-accent-soft/60')}>
-                  <td className="tnum py-3 pr-2 pl-5 text-13 text-faint md:pl-6">{idx + 1}</td>
+                  <td className="tnum py-3 pr-2 pl-5 text-meta text-faint md:pl-6">{idx + 1}</td>
                   <td className="px-3 py-3">
                     <span className="font-medium text-ink">{def.shortName}</span>
-                    <StatusIndicator status={s.status} className="mt-1 text-13" />
+                    <StatusIndicator status={s.status} className="mt-1 text-meta" />
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-3">
                       <Meter value={s.utilization} status={s.status} className="flex-1" />
-                      <span className="tnum w-11 text-right text-13">{formatPercent(s.utilization)}</span>
+                      <span className="tnum w-11 text-right text-meta">{formatPercent(s.utilization)}</span>
                     </div>
                   </td>
                   <td className="tnum px-3 py-3 text-right text-ink-2">{formatDuration(s.waitMin)}</td>
@@ -69,7 +69,7 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
                   <td className="px-3 py-3 text-right">
                     <Delta delta={compareMetric('costPerUnit', result.costPerUnit, p.costPerUnit)} showAbsolute={false} />
                   </td>
-                  <td className="px-3 py-3 text-13">
+                  <td className="px-3 py-3 text-meta">
                     {!minus.feasible ? (
                       <span className="text-faint">нельзя — единственный ресурс</span>
                     ) : minusOverload ? (
@@ -83,7 +83,7 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
                   <td className="py-3 pr-5 pl-3 text-right md:pr-6">
                     <Link
                       to={`/scenarios?id=${scenarioId}&focus=${def.id}`}
-                      className="inline-flex items-center gap-1.5 text-13 font-medium whitespace-nowrap text-accent hover:text-accent-hover"
+                      className="inline-flex items-center gap-1.5 text-meta font-medium whitespace-nowrap text-accent hover:text-accent-hover"
                     >
                       <SlidersHorizontal className="size-4" aria-hidden /> Изменить
                     </Link>

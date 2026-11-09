@@ -101,12 +101,12 @@ export function TerminalNode({ data }: NodeProps<TerminalFlowNode>) {
         className={hidden}
         isConnectable={false}
       />
-      <div className="flex items-center gap-1.5 text-13 text-muted">
+      <div className="flex items-center gap-1.5 text-meta text-muted">
         <Icon className="size-4 shrink-0" aria-hidden />
         <span className="truncate">{data.title}</span>
       </div>
-      <p className="tnum mt-1.5 text-15 font-semibold text-ink">{data.value}</p>
-      <p className="truncate text-13 text-muted">{data.caption}</p>
+      <p className="tnum mt-1.5 text-heading font-semibold text-ink">{data.value}</p>
+      <p className="truncate text-meta text-muted">{data.caption}</p>
     </div>
   )
 }

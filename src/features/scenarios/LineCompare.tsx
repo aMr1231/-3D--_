@@ -23,7 +23,7 @@ export function LineCompare({ base, alt, runKey }: LineCompareProps) {
   ]
   return (
     <section aria-labelledby="line-compare">
-      <h3 id="line-compare" className="text-13 font-semibold text-ink-2">
+      <h3 id="line-compare" className="text-meta font-semibold text-ink-2">
         Линия: база → сценарий
       </h3>
       <div className="mt-3 grid grid-cols-[64px_repeat(6,minmax(0,1fr))] gap-1.5">
@@ -35,7 +35,7 @@ export function LineCompare({ base, alt, runKey }: LineCompareProps) {
         ))}
         {rows.map((row) => (
           <div key={row.key} className="contents">
-            <span className="self-center text-13 text-muted">{row.label}</span>
+            <span className="self-center text-meta text-muted">{row.label}</span>
             {row.r.stages.map((st, i) => {
               const Icon = STATUS_ICON[st.status]
               const isConstraint = row.r.constraintStageId === st.stageId
@@ -79,17 +79,17 @@ export function CycleDelta({ base, alt }: { base: SimulationResult; alt: Simulat
   return (
     <section aria-labelledby="cycle-delta">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 id="cycle-delta" className="text-13 font-semibold text-ink-2">
+        <h3 id="cycle-delta" className="text-meta font-semibold text-ink-2">
           Время цикла по участкам
         </h3>
-        <span className={clsx('tnum text-13 font-semibold', total < 0 ? 'text-ok' : 'text-crit')}>{formatSigned(total, formatDuration)}</span>
+        <span className={clsx('tnum text-meta font-semibold', total < 0 ? 'text-ok' : 'text-crit')}>{formatSigned(total, formatDuration)}</span>
       </div>
       <ul className="mt-3 space-y-2" aria-label="Вклад участков в изменение времени цикла">
         {rows.map((r) => {
           const share = (Math.abs(r.delta) / max) * 50
           const better = r.delta < 0
           return (
-            <li key={r.id} className="grid grid-cols-[96px_minmax(0,1fr)_72px] items-center gap-3 text-13">
+            <li key={r.id} className="grid grid-cols-[96px_minmax(0,1fr)_72px] items-center gap-3 text-meta">
               <span className="truncate text-muted">{r.name}</span>
               <span className="relative h-2 rounded-full bg-subtle" aria-hidden>
                 <span className="absolute inset-y-0 left-1/2 w-px bg-line-strong" />

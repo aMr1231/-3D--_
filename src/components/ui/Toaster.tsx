@@ -24,7 +24,7 @@ export function Toaster() {
             <Icon className={clsx('mt-0.5 size-4 shrink-0', ICON_CLASS[t.tone])} aria-hidden />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-ink">{t.title}</p>
-              {t.description && <p className="mt-0.5 text-13 text-muted">{t.description}</p>}
+              {t.description && <p className="mt-0.5 text-meta text-muted">{t.description}</p>}
             </div>
             <button
               type="button"

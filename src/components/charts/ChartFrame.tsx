@@ -60,7 +60,7 @@ export function DataTable({
   caption: string
 }) {
   return (
-    <table className="w-full text-13">
+    <table className="w-full text-meta">
       <caption className="sr-only">{caption}</caption>
       <thead className="sticky top-0 bg-surface">
         <tr>

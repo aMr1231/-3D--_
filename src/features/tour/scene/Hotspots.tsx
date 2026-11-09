@@ -100,7 +100,7 @@ export function HotspotOverlay({ elements, result, selectedPoiId, onSelect, show
                 {index + 1}
               </span>
             </span>
-            <span className={clsx('text-13 font-medium text-ink', active || showLabels ? 'inline' : 'hidden group-hover:inline group-focus-visible:inline')}>
+            <span className={clsx('text-meta font-medium text-ink', active || showLabels ? 'inline' : 'hidden group-hover:inline group-focus-visible:inline')}>
               {name}
             </span>
           </button>

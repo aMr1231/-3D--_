@@ -23,7 +23,7 @@ export function Panel({ title, actions, children, className, bodyClassName, flus
     <Tag id={id} className={clsx('min-w-0 rounded-xl border border-line bg-surface', className)}>
       {(title || actions) && (
         <header className="flex min-h-9 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 pt-5 md:px-6">
-          {title && <h2 className="min-w-0 flex-1 text-15 font-semibold text-ink">{title}</h2>}
+          {title && <h2 className="min-w-0 flex-1 text-heading font-semibold text-ink">{title}</h2>}
           {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
         </header>
       )}
@@ -74,7 +74,7 @@ export function Page({ children, className, width = 'wide' }: { children: ReactN
 export function DataRow({ label, value }: { label: ReactNode; value: ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-4 py-2">
-      <dt className="text-13 text-muted">{label}</dt>
+      <dt className="text-meta text-muted">{label}</dt>
       <dd className="tnum text-right text-sm font-medium text-ink">{value}</dd>
     </div>
   )

@@ -60,7 +60,7 @@ export function OverflowMenu({ label, items, align = 'end' }: { label: string; i
                 </span>
                 <span className="min-w-0">
                   <span className="block">{item.label}</span>
-                  {item.disabled && item.disabledHint && <span className="mt-0.5 block text-13 text-muted">{item.disabledHint}</span>}
+                  {item.disabled && item.disabledHint && <span className="mt-0.5 block text-meta text-muted">{item.disabledHint}</span>}
                 </span>
               </button>
             </li>

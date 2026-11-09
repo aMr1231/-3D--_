@@ -20,7 +20,7 @@ interface StageDetailsProps {
 function Group({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section>
-      <h3 className="text-13 font-semibold text-ink-2">{title}</h3>
+      <h3 className="text-meta font-semibold text-ink-2">{title}</h3>
       <dl className="mt-1 divide-y divide-line">{children}</dl>
     </section>
   )
@@ -47,7 +47,7 @@ export function StageDetails({ def, result, onClose }: StageDetailsProps) {
         </>
       }
       title={def.name}
-      headerExtra={<p className="text-13 text-muted">{def.area}</p>}
+      headerExtra={<p className="text-meta text-muted">{def.area}</p>}
       footer={
         <div className="grid grid-cols-3 gap-2">
           <ButtonLink to={`/scenarios?focus=${def.id}`} size="sm" variant="primary" icon={<SlidersHorizontal />} className="px-2">
@@ -67,11 +67,11 @@ export function StageDetails({ def, result, onClose }: StageDetailsProps) {
 
         <div>
           <div className="flex items-baseline justify-between">
-            <span className="text-13 text-muted">Загрузка</span>
+            <span className="text-meta text-muted">Загрузка</span>
             <span className="tnum text-kpi font-semibold text-ink">{formatPercent(s.utilization, 1)}</span>
           </div>
           <Meter value={s.utilization} status={s.status} size="md" className="mt-3" />
-          <p className="mt-3 text-13 text-muted">{STATUS_META[s.status].description}</p>
+          <p className="mt-3 text-meta text-muted">{STATUS_META[s.status].description}</p>
         </div>
 
         <Group title="Производительность">
@@ -99,7 +99,7 @@ export function StageDetails({ def, result, onClose }: StageDetailsProps) {
         </Group>
 
         <section>
-          <h3 className="text-13 font-semibold text-ink-2">Оборудование</h3>
+          <h3 className="text-meta font-semibold text-ink-2">Оборудование</h3>
           <ul className="mt-2 space-y-1.5 text-sm text-ink-2">
             {def.equipment.map((e) => (
               <li key={e} className="flex gap-2.5">
@@ -112,8 +112,8 @@ export function StageDetails({ def, result, onClose }: StageDetailsProps) {
 
         {insight && (
           <section className="rounded-lg bg-subtle p-4">
-            <h3 className="text-13 font-semibold text-ink-2">Расчёт модели</h3>
-            <p className="mt-1.5 text-13 text-ink-2">{insight.recommendation}</p>
+            <h3 className="text-meta font-semibold text-ink-2">Расчёт модели</h3>
+            <p className="mt-1.5 text-meta text-ink-2">{insight.recommendation}</p>
           </section>
         )}
       </div>

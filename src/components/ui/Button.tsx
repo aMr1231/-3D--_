@@ -18,8 +18,8 @@ const variants: Record<ButtonVariant, string> = {
 }
 
 const sizes: Record<ButtonSize, string> = {
-  xs: 'h-7 px-2.5 text-13 rounded-lg [&_svg]:size-3.5 pointer-coarse:h-9 pointer-coarse:px-3',
-  sm: 'h-8 px-3 text-13 rounded-lg [&_svg]:size-4 pointer-coarse:h-10',
+  xs: 'h-7 px-2.5 text-meta rounded-lg [&_svg]:size-3.5 pointer-coarse:h-9 pointer-coarse:px-3',
+  sm: 'h-8 px-3 text-meta rounded-lg [&_svg]:size-4 pointer-coarse:h-10',
   md: 'h-9 px-3.5 text-sm rounded-lg [&_svg]:size-4 pointer-coarse:h-11',
   icon: 'size-9 rounded-lg [&_svg]:size-[18px] pointer-coarse:size-11',
   'icon-sm': 'size-8 rounded-lg [&_svg]:size-4 pointer-coarse:size-10',

@@ -11,12 +11,13 @@ import { IssuesList } from './IssuesList'
 import { KpiStrip } from './KpiStrip'
 import { LiveLine } from './LiveLine'
 import { LineStatus } from './LineStatus'
-import { PerformanceTrend } from './PerformanceTrend'
-import { RecentRuns } from './RecentRuns'
-import { StageTable } from './StageTable'
 
 type Period = '7' | '14' | '30'
 
+/**
+ * Обзор — только главное, сверху вниз: как работает линия → что требует внимания → ключевые цифры → живая смена.
+ * Подробные графики и таблицы — в «Аналитике», журнал расчётов — там же.
+ */
 export default function DashboardPage() {
   const [period, setPeriod] = useState<Period>('14')
   const history = HISTORY.slice(-Number(period))
@@ -25,7 +26,7 @@ export default function DashboardPage() {
   return (
     <Page>
       <PageHeader
-        title="Обзор производства"
+        title="Обзор"
         actions={
           <>
             <ButtonLink to="/tour" variant="secondary" icon={<Cuboid />}>
@@ -42,15 +43,17 @@ export default function DashboardPage() {
         <LineStatus result={result} />
       </div>
 
-      <LiveLine />
+      <div data-tour="issues">
+        <IssuesList result={result} />
+      </div>
 
       <section aria-labelledby="kpi-title" className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="kpi-title" className="text-15 font-semibold text-ink">
+          <h2 id="kpi-title" className="text-heading font-semibold text-ink">
             Показатели
           </h2>
           <SegmentedControl
-            label="Период истории"
+            label="Сравнить с периодом"
             value={period}
             onChange={setPeriod}
             options={[
@@ -65,18 +68,8 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_380px]">
-        <div className="min-w-0 space-y-6">
-          <PerformanceTrend history={history} />
-          <StageTable result={result} />
-        </div>
-        <div className="min-w-0 space-y-6">
-          <div data-tour="issues">
-            <IssuesList result={result} />
-          </div>
-          <RecentRuns />
-        </div>
-      </div>
+      <LiveLine />
+
       <OnboardingTour />
       <DashboardInfo result={result} history={history} />
     </Page>

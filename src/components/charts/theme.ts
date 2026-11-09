@@ -29,4 +29,4 @@ export const CHART = {
   idle: '#8794a8',
 } as const
 
-export const AXIS_TICK = { fill: CHART.tick, fontSize: 12 } as const
+export const AXIS_TICK = { fill: CHART.tick, fontSize: 13 } as const

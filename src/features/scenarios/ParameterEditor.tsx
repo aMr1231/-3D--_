@@ -40,7 +40,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
           <h3 id="global-params" className="text-sm font-semibold text-ink">
             Производственная нагрузка
           </h3>
-          <span className="tnum text-13 text-muted">{formatNumber(draft.loadPerHour * draft.hoursPerDay, 0)} заготовок/сут</span>
+          <span className="tnum text-meta text-muted">{formatNumber(draft.loadPerHour * draft.hoursPerDay, 0)} заготовок/сут</span>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <ParamField
@@ -95,7 +95,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
               </div>
               <div className="flex items-center gap-4">
                 {r && (
-                  <span className={clsx('flex items-center gap-1.5 text-13', stale && 'opacity-50')} title={stale ? 'Результат устарел — пересчитайте' : undefined}>
+                  <span className={clsx('flex items-center gap-1.5 text-meta', stale && 'opacity-50')} title={stale ? 'Результат устарел — пересчитайте' : undefined}>
                     <StatusIndicator status={r.status} variant="icon" />
                     <span className="tnum text-muted">
                       загрузка <span className="font-medium text-ink-2">{formatPercent(r.utilization)}</span>
@@ -103,7 +103,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
                   </span>
                 )}
                 {changed && (
-                  <button type="button" onClick={() => setStage(def.id, { ...b })} className="flex items-center gap-1 text-13 text-muted hover:text-ink">
+                  <button type="button" onClick={() => setStage(def.id, { ...b })} className="flex items-center gap-1 text-meta text-muted hover:text-ink">
                     <RotateCcw className="size-3.5" aria-hidden /> Вернуть
                   </button>
                 )}

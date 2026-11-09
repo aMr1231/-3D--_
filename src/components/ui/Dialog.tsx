@@ -45,7 +45,7 @@ export function Modal({ open, onClose, title, description, children, footer, wid
         <div className="flex flex-col">
           <div className="flex items-start justify-between gap-4 px-6 pt-5">
             <div className="space-y-1.5">
-              <h2 id={titleId} className="text-15 font-semibold">
+              <h2 id={titleId} className="text-heading font-semibold">
                 {title}
               </h2>
               {description && <div className="text-sm text-muted">{description}</div>}
@@ -136,7 +136,7 @@ export function NameDialog({ open, title, submitLabel, initialName, initialDescr
     <Modal open={open} onClose={onCancel} title={title} width="sm">
       <form onSubmit={submit} className="space-y-3" noValidate>
         <div className="space-y-1.5">
-          <label htmlFor={nameId} className="text-13 font-medium text-ink-2">
+          <label htmlFor={nameId} className="text-meta font-medium text-ink-2">
             Название
           </label>
           <input
@@ -156,13 +156,13 @@ export function NameDialog({ open, title, submitLabel, initialName, initialDescr
             )}
           />
           {error && (
-            <p id={`${nameId}-err`} className="text-13 text-crit">
+            <p id={`${nameId}-err`} className="text-meta text-crit">
               {error}
             </p>
           )}
         </div>
         <div className="space-y-1.5">
-          <label htmlFor={descId} className="text-13 font-medium text-ink-2">
+          <label htmlFor={descId} className="text-meta font-medium text-ink-2">
             Описание <span className="font-normal text-faint">— необязательно</span>
           </label>
           <textarea
