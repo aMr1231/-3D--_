@@ -153,6 +153,28 @@ class RealtimeTest extends TestCase
         $this->assertContains('shift', array_column($snapshot['events'], 'type'));
     }
 
+    public function test_live_simulator_stays_stable_over_several_days(): void
+    {
+        // Регрессия: отказ, назначенный на конец рабочих суток, после обнуления часов не заканчивался —
+        // станок «ремонтировался» вечно, и очередь перед участком росла без предела.
+        $ticksPerDay = intdiv(DatabaseSeeder::baseline()['hoursPerDay'] * 60, config('twinline.live.minutes_per_tick'));
+        foreach ([7, 99] as $seed) {
+            $sim = new LineSimulator(DatabaseSeeder::baseline(), config('twinline.live'), seed: $seed);
+            $sim->warmUp(60);
+            $downTicks = [];
+            for ($t = 0; $t < $ticksPerDay * 3; $t++) {
+                $snapshot = $sim->tick();
+                foreach ($snapshot['stages'] as $stage) {
+                    $id = $stage['id'];
+                    $downTicks[$id] = $stage['up'] < $stage['units'] ? ($downTicks[$id] ?? 0) + 1 : 0;
+                    $this->assertLessThan(60, $downTicks[$id], "seed $seed: на участке $id оборудование в ремонте дольше 2 часов");
+                    $this->assertLessThan(150, $stage['queue'], "seed $seed: очередь перед $id растёт без предела");
+                }
+            }
+            $this->assertLessThan(300, $snapshot['wip'], "seed $seed: незавершённое производство растёт без предела");
+        }
+    }
+
     public function test_live_command_stores_snapshot(): void
     {
         config(['twinline.live.tick_seconds' => 0, 'twinline.live.cache_store' => 'array']);

@@ -19,7 +19,15 @@ class LineSimulator
     /** @var array<string, array<string, mixed>> */
     private array $stages = [];
 
+    /** Минута суток модели (для часов и смен), обнуляется в конце рабочих суток. */
     private int $minute = 0;
+
+    /**
+     * Непрерывное время имитатора в минутах — никогда не обнуляется.
+     * По нему считаются ремонты и скользящие окна: иначе отказ, назначенный на конец суток,
+     * после обнуления часов не закончился бы никогда и очередь участка росла бы бесконечно.
+     */
+    private int $elapsed = 0;
 
     private int $produced = 0;
 
@@ -32,7 +40,7 @@ class LineSimulator
     /** @var array<int, array<string, mixed>> */
     private array $events = [];
 
-    /** @var array<int, array{0: int, 1: int}> выпуск по шагам: [минута, штук] */
+    /** @var array<int, array{0: int, 1: int}> выпуск по шагам: [непрерывная минута, штук] */
     private array $outputLog = [];
 
     /**
@@ -55,31 +63,21 @@ class LineSimulator
                 'queue' => (int) $stage['initial_queue'],   // ожидают обработки
                 // Единицы оборудования: остаток работы над текущей деталью и минута окончания ремонта.
                 'pool' => array_fill(0, (int) $p['resources'], ['remaining' => 0.0, 'downUntil' => null]),
-                'log' => [],       // [минута, минуты работы, минуты доступности]
+                'log' => [],       // [непрерывная минута, минуты работы, минуты доступности]
             ];
         }
     }
 
     /**
      * Прогрев: линия «уже работала» предыдущий час, поэтому загрузка и очереди с первого среза
-     * установившиеся, а не нулевые. Счётчики смены и журнал событий после прогрева обнуляются.
+     * установившиеся, а не нулевые. Часы смены, счётчики и журнал событий после прогрева обнуляются;
+     * непрерывное время, ремонты и окно загрузки продолжаются как есть.
      */
     public function warmUp(int $minutes): void
     {
         while ($this->minute < $minutes) {
             $this->tick();
         }
-        $offset = $this->minute;
-        foreach ($this->stages as &$s) {
-            $s['log'] = array_map(fn ($e) => [$e[0] - $offset, $e[1], $e[2]], $s['log']);
-            foreach ($s['pool'] as &$unit) {
-                if ($unit['downUntil'] !== null) {
-                    $unit['downUntil'] -= $offset;
-                }
-            }
-            unset($unit);
-        }
-        unset($s);
         $this->outputLog = [];
         $this->minute = 0;
         $this->produced = 0;
@@ -100,12 +98,9 @@ class LineSimulator
         $dayMinutes = (int) $this->params['hoursPerDay'] * 60;
         $before = $this->minute;
         $this->minute += $dt;
+        $this->elapsed += $dt;
         if ($this->minute >= $dayMinutes) {
             $this->minute -= $dayMinutes;
-            foreach ($this->stages as &$s) {
-                $s['log'] = [];
-            }
-            unset($s);
         }
         if (intdiv($before, self::SHIFT_MINUTES) !== intdiv($this->minute, self::SHIFT_MINUTES)) {
             $this->produced = 0;
@@ -150,14 +145,14 @@ class LineSimulator
                 }
             }
             unset($unit);
-            $s['log'][] = [$this->minute, $busy, $available];
+            $s['log'][] = [$this->elapsed, $busy, $available];
 
             $good = $s['yield'] < 1 ? $this->binomial($done, $s['yield']) : $done;
             $this->scrap += $done - $good;
             $inflow = $good;
             if ($i === count($ids) - 1) {
                 $this->produced += $done;
-                $this->outputLog[] = [$this->minute, $done];
+                $this->outputLog[] = [$this->elapsed, $done];
             }
             unset($s);
         }
@@ -168,7 +163,7 @@ class LineSimulator
     public function snapshot(): array
     {
         $shiftMinute = $this->minute % self::SHIFT_MINUTES;
-        $since = $this->minute - self::WINDOW_MINUTES;
+        $since = $this->elapsed - self::WINDOW_MINUTES;
         $this->outputLog = array_values(array_filter($this->outputLog, fn ($e) => $e[0] > $since));
         $window = min(self::WINDOW_MINUTES, max($this->minutesPerTick(), $shiftMinute));
         $recent = array_sum(array_column($this->outputLog, 1));
@@ -223,7 +218,7 @@ class LineSimulator
     {
         foreach ($this->stages as $id => &$s) {
             foreach ($s['pool'] as $n => &$unit) {
-                if ($unit['downUntil'] !== null && $unit['downUntil'] <= $this->minute) {
+                if ($unit['downUntil'] !== null && $unit['downUntil'] <= $this->elapsed) {
                     $unit['downUntil'] = null;
                     $this->event(['type' => 'up', 'stageId' => $id, 'unit' => $n + 1]);
                 }
@@ -242,7 +237,7 @@ class LineSimulator
                 }
                 if ($this->random() < $dt / $mtbf) {
                     $repair = 6 + (int) round($this->random() * 2 * (self::MEAN_REPAIR_MINUTES - 6));
-                    $unit['downUntil'] = $this->minute + $repair;
+                    $unit['downUntil'] = $this->elapsed + $repair;
                     $this->event(['type' => 'down', 'stageId' => $id, 'unit' => $n + 1, 'minutes' => $repair]);
                 }
             }
