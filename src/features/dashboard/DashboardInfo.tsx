@@ -49,7 +49,7 @@ export function DashboardInfo({ result, history }: { result: SimulationResult; h
           items={[
             { term: 'Выпуск за смену', text: 'Годные изделия с начала смены и отклонение от плана на это время.' },
             { term: 'Темп за час', text: 'Выпуск за последние минуты смены в пересчёте на час; план — 22 шт/ч.' },
-            { term: 'Незавершённое производство', text: 'Изделия в очередях и в работе.' },
+            { term: 'Задел', text: 'Незавершённое производство: изделия в очередях и в работе.' },
             { term: 'Брак на ОТК', text: 'Забракованные изделия с начала смены.' },
           ]}
         />
@@ -71,7 +71,7 @@ export function DashboardInfo({ result, history }: { result: SimulationResult; h
           items={[
             { term: 'Производительность', text: METRICS.outputPerHour.hint },
             { term: 'Время цикла', text: METRICS.cycleTimeMin.hint },
-            { term: 'Незавершённое производство', text: METRICS.wip.hint },
+            { term: 'Задел', text: `Незавершённое производство. ${METRICS.wip.hint}.` },
             { term: 'Загрузка оборудования', text: METRICS.avgUtilization.hint },
             { term: 'Операционные затраты, в сутки', text: METRICS.operatingCostPerDay.hint },
             { term: 'Перегрузки', text: 'Число участков с перегрузкой (загрузка ≥ 95 % или поступление выше мощности).' },

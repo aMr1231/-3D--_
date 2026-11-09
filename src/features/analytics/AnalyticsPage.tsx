@@ -47,7 +47,7 @@ export default function AnalyticsPage() {
     { label: 'Выпуск', value: formatNumber(result.outputPerDay, 0), unit: 'шт/сут' },
     { label: 'Время цикла', value: formatDuration(result.cycleTimeMin) },
     { label: 'Себестоимость', value: formatRub(result.costPerUnit) },
-    { label: 'Ограничение линии', value: constraint.shortName, extra: formatPercent(result.constraintUtilization) },
+    { label: 'Ограничение', value: constraint.shortName, extra: formatPercent(result.constraintUtilization) },
   ]
 
   return (
@@ -92,12 +92,12 @@ export default function AnalyticsPage() {
       />
 
       <section aria-label="Сводка сценария" className="rounded-xl border border-line bg-surface p-5 md:p-6">
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-4">
+        <dl className="grid gap-x-6 gap-y-4 sm:grid-cols-2 sm:gap-y-6 xl:grid-cols-4">
           {stats.map((s) => (
-            <div key={s.label} className="min-w-0">
+            <div key={s.label} className="flex min-w-0 items-baseline justify-between gap-4 sm:block">
               <dt className="truncate text-13 text-muted">{s.label}</dt>
-              <dd className="mt-2 flex items-baseline gap-2 whitespace-nowrap">
-                <span className="tnum truncate text-kpi font-semibold text-ink">{s.value}</span>
+              <dd className="flex items-baseline gap-2 whitespace-nowrap sm:mt-2">
+                <span className="tnum text-xl font-semibold text-ink sm:text-kpi">{s.value}</span>
                 {s.unit && <span className="text-sm text-muted">{s.unit}</span>}
                 {s.extra && <span className={clsx('tnum text-sm font-medium', STATUS_TEXT[constraintStatus])}>{s.extra}</span>}
               </dd>

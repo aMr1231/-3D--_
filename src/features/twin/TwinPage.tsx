@@ -22,7 +22,8 @@ import { TwinInfo } from './TwinInfo'
 
 export default function TwinPage() {
   const [search, setSearch] = useSearchParams()
-  const [view, setView] = useState<'flow' | 'list'>(() => (window.matchMedia('(max-width: 767px)').matches ? 'list' : 'flow'))
+  // Схема читается от 1024 px; на телефоне и планшете по умолчанию — вертикальный список участков.
+  const [view, setView] = useState<'flow' | 'list'>(() => (window.matchMedia('(max-width: 1023px)').matches ? 'list' : 'flow'))
   const [layer, setLayer] = useState<TwinLayer>('utilization')
 
   const scenario = useActiveScenario()

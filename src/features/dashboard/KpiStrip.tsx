@@ -36,7 +36,7 @@ export function KpiStrip({ result, history }: KpiStripProps) {
   const kpis: Kpi[] = [
     { key: 'throughput', label: 'Производительность', value: formatNumber(result.outputPerHour, 1), unit: 'шт/ч', metric: 'outputPerHour', series: (d) => d.result.outputPerHour },
     { key: 'cycle', label: 'Время цикла', value: formatDuration(result.cycleTimeMin), metric: 'cycleTimeMin', series: (d) => d.result.cycleTimeMin },
-    { key: 'wip', label: 'Незавершённое пр-во', value: formatNumber(result.wip, 0), unit: 'шт', metric: 'wip', series: (d) => d.result.wip },
+    { key: 'wip', label: 'Задел', value: formatNumber(result.wip, 0), unit: 'шт', metric: 'wip', series: (d) => d.result.wip },
     { key: 'utilization', label: 'Загрузка', value: formatPercent(result.avgUtilization, 1), metric: 'avgUtilization', series: (d) => d.result.avgUtilization },
     { key: 'cost', label: 'Затраты', value: formatRubCompact(result.operatingCostPerDay), unit: '/сут', metric: 'operatingCostPerDay', series: (d) => d.result.operatingCostPerDay },
     { key: 'bottlenecks', label: 'Перегрузки', value: String(result.bottleneckCount), note: `из ${STAGES.length} участков` },

@@ -49,16 +49,16 @@ export function LineStatus({ result }: { result: SimulationResult }) {
             <ChevronRight className="size-4 text-faint transition-transform group-hover:translate-x-0.5" aria-hidden />
           </Link>
         </div>
-        <div className="hidden min-w-0 md:block">
+        <div className="hidden min-w-0 lg:block">
           <LineDiagram result={result} theme="light" onSelect={(id) => navigate(`/twin?stage=${id}`)} className="w-full overflow-visible" />
         </div>
       </div>
 
-      <ol className="scrollbar-thin flex gap-6 overflow-x-auto px-5 pb-5 md:hidden" aria-label="Участки линии по ходу процесса">
+      <ol className="scrollbar-thin flex gap-6 overflow-x-auto px-5 pb-5 md:grid md:grid-cols-3 md:gap-y-6 md:overflow-visible md:px-8 md:pb-8 lg:hidden" aria-label="Участки линии по ходу процесса">
         {STAGES.map((def, i) => {
           const s = result.stages[i]
           return (
-            <li key={def.id} className="min-w-[112px] flex-1">
+            <li key={def.id} className="min-w-[112px] flex-1 md:min-w-0">
               <Link
                 to={`/twin?stage=${def.id}`}
                 className="block space-y-2 py-1"

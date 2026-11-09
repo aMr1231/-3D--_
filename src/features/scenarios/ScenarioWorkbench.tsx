@@ -118,7 +118,7 @@ export function ScenarioWorkbench({ scenario, suggestion, focusStageId, scenario
               <h1 className="truncate text-xl font-semibold text-ink sm:text-title">{scenario.name}</h1>
               {isBaseline && <Lock className="size-4 shrink-0 text-faint" aria-label="Только чтение" />}
             </div>
-            {scenario.description && <p className="mt-1 max-w-[680px] truncate text-sm text-muted">{scenario.description}</p>}
+            {scenario.description && <p className="mt-1 line-clamp-2 max-w-[680px] text-sm text-muted">{scenario.description}</p>}
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {changes > 0 && (

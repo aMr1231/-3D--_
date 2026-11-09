@@ -96,12 +96,12 @@ function Counters({ live }: { live: LiveSnapshot }) {
       ),
     },
     { label: 'Темп', value: formatNumber(live.ratePerHour, 1), unit: 'шт/ч' },
-    { label: 'Незавершённое пр-во', value: formatNumber(live.wip), unit: 'шт' },
+    { label: 'Задел', value: formatNumber(live.wip), unit: 'шт' },
     { label: 'Брак на ОТК', value: formatNumber(live.scrap), unit: 'шт' },
   ]
   return (
     <div className="space-y-5">
-      <dl className="grid grid-cols-2 gap-x-6 gap-y-5 md:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-x-6 gap-y-5 xl:grid-cols-4">
         {items.map((item) => (
           <div key={item.label} className="min-w-0">
             <dt className="truncate text-13 text-muted">{item.label}</dt>
@@ -167,7 +167,7 @@ function Units({ total, up, inWork, label }: { total: number; up: number; inWork
         <span
           key={i}
           className={clsx(
-            'size-2.5 rounded-sm border transition-colors duration-300',
+            'size-2.5 rounded-xs border transition-colors duration-300',
             i >= up ? 'border-crit bg-crit-soft' : i < inWork ? 'border-accent bg-accent' : 'border-line-strong bg-surface',
           )}
         />

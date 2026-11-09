@@ -10,7 +10,7 @@ import {
   type Node,
 } from '@xyflow/react'
 import { useEffect, useMemo, useRef } from 'react'
-import { useReactFlow, type FitViewOptions } from '@xyflow/react'
+import { useNodesInitialized, useReactFlow, useStore, type FitViewOptions } from '@xyflow/react'
 
 type Padding = NonNullable<FitViewOptions['padding']>
 import { STAGES } from '@/data/demo/enterprise'
@@ -189,20 +189,29 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
   )
 }
 
-/** Перекадрирование схемы, чтобы открытая панель деталей не закрывала участки. */
+/**
+ * Кадрирование схемы: после измерения узлов, при изменении размера холста
+ * и при открытии панели деталей (чтобы она не закрывала участки).
+ */
 function FitToPanel({ panelOpen }: { panelOpen: boolean }) {
   const { fitView } = useReactFlow()
-  const first = useRef(true)
+  const initialized = useNodesInitialized()
+  const width = useStore((s) => s.width)
+  const height = useStore((s) => s.height)
+  const lastPanel = useRef(panelOpen)
   useEffect(() => {
+    if (!initialized || !width || !height) return
     const mobile = window.matchMedia('(max-width: 767px)').matches
     const padding: Padding = panelOpen
       ? mobile
         ? { top: '16px', left: '16px', right: '16px', bottom: '62%' }
-        : { top: '28px', left: '28px', bottom: '28px', right: '396px' }
+        : { top: '28px', left: '28px', bottom: '28px', right: '412px' }
       : 0.07
-    const id = window.setTimeout(() => fitView({ padding, duration: first.current ? 0 : 280 }), first.current ? 60 : 0)
-    first.current = false
+    // Плавно — только когда открылась или закрылась панель; при загрузке и изменении размера — сразу.
+    const animate = lastPanel.current !== panelOpen
+    lastPanel.current = panelOpen
+    const id = window.setTimeout(() => fitView({ padding, duration: animate ? 280 : 0 }), 30)
     return () => window.clearTimeout(id)
-  }, [panelOpen, fitView])
+  }, [initialized, width, height, panelOpen, fitView])
   return null
 }

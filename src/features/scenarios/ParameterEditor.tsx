@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { ParamField } from '@/components/ui/Controls'
 import { StatusIndicator } from '@/components/ui/Status'
 import { STAGES } from '@/data/demo/enterprise'
-import { formatNumber, formatPercent, formatRub, plural } from '@/domain/format'
+import { formatNumber, formatPercent, formatRub } from '@/domain/format'
 import type { ScenarioParams, SimulationResult, StageParams } from '@/domain/types'
 import { RANGES, stageParamsEqual } from './params'
 
@@ -111,7 +111,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
             </div>
             <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2 2xl:grid-cols-4">
               <ParamField
-                label={`Ресурсы, ${plural(p.resources, def.resourceKind)}`}
+                label="Ресурсы"
                 value={p.resources}
                 baseValue={b.resources}
                 {...RANGES.resources}
