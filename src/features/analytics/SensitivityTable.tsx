@@ -57,7 +57,8 @@ export function SensitivityTable({ result, highlight, scenarioId }: { result: Si
                   </td>
                   <td className="px-3 py-3">
                     <div className="flex items-center gap-3">
-                      <Meter value={s.utilization} status={s.status} className="flex-1" />
+                      {/* min-w: иначе в узкой таблице полоса сжимается в точку, а процент наезжает на соседнюю колонку */}
+                      <Meter value={s.utilization} status={s.status} className="min-w-16 flex-1" />
                       <span className="tnum w-11 text-right text-meta">{formatPercent(s.utilization)}</span>
                     </div>
                   </td>

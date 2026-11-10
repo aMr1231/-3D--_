@@ -23,7 +23,8 @@ export function Panel({ title, actions, children, className, bodyClassName, flus
     <Tag id={id} className={clsx('min-w-0 rounded-xl border border-line bg-surface', className)}>
       {(title || actions) && (
         <header className="flex min-h-9 flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 pt-5 md:px-6">
-          {title && <h2 className="min-w-0 flex-1 text-heading font-semibold text-ink">{title}</h2>}
+          {/* min-w-40: на узком экране действия переносятся под заголовок, а не наезжают на него */}
+          {title && <h2 className="min-w-40 flex-1 text-heading font-semibold text-ink">{title}</h2>}
           {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
         </header>
       )}

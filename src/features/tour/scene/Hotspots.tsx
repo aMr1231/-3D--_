@@ -23,19 +23,38 @@ export function AnchorProjector({ elements }: { elements: HotspotElements }) {
   useFrame(() => {
     const els = elements.current
     if (!els) return
+    const items: { el: HTMLElement; left: number; top: number; w: number; h: number }[] = []
     for (const a of anchors) {
       const el = els[a.id]
       if (!el) continue
       tmp.copy(a.v).project(camera)
       const visible = tmp.z < 1 && Math.abs(tmp.x) < 1.15 && Math.abs(tmp.y) < 1.15
-      const x = ((tmp.x + 1) / 2) * size.width
-      const y = ((1 - tmp.y) / 2) * size.height
-      el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-12px, -50%)`
       el.style.visibility = visible ? 'visible' : 'hidden'
+      if (!visible) continue
+      const w = el.offsetWidth
+      const h = el.offsetHeight
+      // Кружок с номером — над якорем, подпись тянется вправо (но не за край холста).
+      const left = Math.max(LABEL_GAP, Math.min(((tmp.x + 1) / 2) * size.width - 12, size.width - w - LABEL_GAP))
+      items.push({ el, left, top: ((1 - tmp.y) / 2) * size.height - h / 2, w, h })
+    }
+    // Соседние метки не должны наезжать друг на друга: идём снизу вверх и приподнимаем пересекающиеся.
+    items.sort((a, b) => b.top - a.top)
+    const placed: { x0: number; x1: number; y0: number; y1: number }[] = []
+    for (const it of items) {
+      for (let guard = 0; guard < placed.length; guard++) {
+        const hit = placed.find((p) => it.left < p.x1 + LABEL_GAP && it.left + it.w > p.x0 - LABEL_GAP && it.top < p.y1 + LABEL_GAP && it.top + it.h > p.y0 - LABEL_GAP)
+        if (!hit) break
+        it.top = hit.y0 - LABEL_GAP - it.h
+      }
+      placed.push({ x0: it.left, x1: it.left + it.w, y0: it.top, y1: it.top + it.h })
+      it.el.style.transform = `translate(${it.left.toFixed(1)}px, ${it.top.toFixed(1)}px)`
     }
   })
   return null
 }
+
+/** Минимальный зазор между метками точек интереса, px. */
+const LABEL_GAP = 4
 
 /** Длина окружности кольца загрузки (r = 12,5). */
 const RING_LEN = 2 * Math.PI * 12.5

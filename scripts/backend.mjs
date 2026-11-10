@@ -20,8 +20,17 @@ import { join, resolve } from 'node:path'
 const root = resolve(import.meta.dirname, '..')
 const backend = join(root, 'backend')
 
+const isWindows = process.platform === 'win32'
+
+/**
+ * Команда одной строкой для запуска через оболочку (на Windows composer — это .bat, без оболочки он не стартует).
+ * Аргументы с пробелами и кавычками экранируются; передавать массив аргументов вместе с shell: true
+ * Node.js больше не советует (DEP0190).
+ */
+const shellLine = (cmd, args) => [cmd, ...args].map((a) => (/[\s"&|<>^]/.test(a) ? `"${a.replace(/"/g, '""')}"` : a)).join(' ')
+
 function works(cmd, args = ['-v']) {
-  const r = spawnSync(cmd, args, { stdio: 'ignore', shell: process.platform === 'win32' })
+  const r = isWindows ? spawnSync(shellLine(cmd, args), { stdio: 'ignore', shell: true }) : spawnSync(cmd, args, { stdio: 'ignore' })
   return r.status === 0
 }
 
@@ -42,15 +51,17 @@ function findPhp() {
 
 const php = findPhp()
 
-function run(cmd, args, opts = {}) {
-  const r = spawnSync(cmd, args, { cwd: backend, stdio: 'inherit', shell: false, ...opts })
+function run(cmd, args, { shell = false } = {}) {
+  const r = shell
+    ? spawnSync(shellLine(cmd, args), { cwd: backend, stdio: 'inherit', shell: true })
+    : spawnSync(cmd, args, { cwd: backend, stdio: 'inherit' })
   if (r.status !== 0) process.exit(r.status ?? 1)
 }
 
 const artisan = (...args) => run(php, ['artisan', ...args])
 
 function composer(...args) {
-  if (works('composer', ['--version'])) return run('composer', args, { shell: process.platform === 'win32' })
+  if (works('composer', ['--version'])) return run('composer', args, { shell: isWindows })
   const phar = join(process.env.LOCALAPPDATA ?? '', 'Programs', 'Composer', 'composer.phar')
   if (existsSync(phar)) return run(php, [phar, ...args])
   console.error('Composer не найден. Установите его: https://getcomposer.org/download/')

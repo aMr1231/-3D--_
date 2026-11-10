@@ -118,7 +118,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
                 onClick={() => toggle(def.id)}
                 aria-expanded={isOpen}
                 aria-controls={panelId}
-                className="group flex min-w-0 flex-1 items-start gap-2.5 text-left"
+                className="group flex min-w-[15rem] flex-1 items-start gap-2.5 text-left"
               >
                 <ChevronDown
                   className={clsx('mt-0.5 size-4 shrink-0 text-faint transition-transform group-hover:text-ink', !isOpen && '-rotate-90')}
@@ -126,7 +126,7 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
                 />
                 <span className="min-w-0">
                   <span className="flex items-center gap-2">
-                    <span id={`stage-${def.id}`} className="truncate text-sm font-semibold text-ink">
+                    <span id={`stage-${def.id}`} className="text-sm font-semibold text-ink">
                       {def.name}
                     </span>
                     {changed && (
@@ -152,7 +152,8 @@ export function ParameterEditor({ draft, base, onChange, calculated, stale, focu
                   )}
                 </span>
               </button>
-              <div className="flex items-center gap-4">
+              {/* На узком экране загрузка уходит под название — с отступом под шеврон */}
+              <div className="ml-[26px] flex items-center gap-4 sm:ml-0">
                 {r && (
                   <span className={clsx('flex items-center gap-1.5 text-meta', stale && 'opacity-50')} title={stale ? 'Результат устарел — пересчитайте' : undefined}>
                     <StatusIndicator status={r.status} variant="icon" />

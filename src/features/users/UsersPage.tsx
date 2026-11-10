@@ -155,7 +155,7 @@ export default function UsersPage() {
                           disabled={self || busyId === u.id}
                           title={self ? 'Собственную роль изменить нельзя' : undefined}
                           onChange={(e) => void changeRole(u, e.target.value as Role)}
-                          className="w-[136px] sm:w-[180px]"
+                          className="w-[150px] sm:w-[180px]"
                         >
                           <option value="manager">{ROLE_LABEL.manager}</option>
                           <option value="guest">Гость</option>

@@ -1,7 +1,9 @@
 import { CameraControls, PerformanceMonitor } from '@react-three/drei'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { Box3, Fog, PerspectiveCamera, Vector3 } from 'three'
 import { OVERVIEW_VIEW } from '@/data/demo/tour'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import type { CameraView, SimulationResult, StageStatus } from '@/domain/types'
 import { FactoryModel } from './factory/FactoryModel'
 import type { StageId } from './factory/kit'
@@ -39,6 +41,9 @@ export function FactoryScene(props: FactorySceneProps) {
     [result],
   )
   const cncCount = Math.min(result.params.stages.machining?.resources ?? 4, MAX_CNC)
+  // Подписи меток помещаются только на широком экране; на планшете и телефоне — номера,
+  // название появляется при наведении, фокусе и выборе точки.
+  const showLabels = useMediaQuery('(min-width: 1200px)')
 
   return (
     <div className="relative h-full w-full">
@@ -100,7 +105,7 @@ export function FactoryScene(props: FactorySceneProps) {
       result={props.result}
       selectedPoiId={props.selectedPoiId}
       onSelect={props.onSelectPoi}
-      showLabels={!isMobile}
+      showLabels={showLabels}
       showStatus={props.showStatus}
     />
     </div>
@@ -111,9 +116,71 @@ export function FactoryScene(props: FactorySceneProps) {
 let introPlayed = false
 const INTRO_FROM = { position: [-52, 18, 46] as const, target: [-6, 1, -2] as const }
 
+/** Габариты цеха с цоколем и воротами (м) — общий вид должен показывать его целиком. */
+const HALL_BOX = new Box3(new Vector3(-37, 0, -17.5), new Vector3(37, 8, 17.5))
+/** Насколько кадр может быть занят цехом: оставляем поля, чтобы метки не прилипали к краям. */
+const FIT_X = 0.9
+const FIT_Y = 0.86
+
+/**
+ * Во сколько раз отодвинуть камеру общего вида, чтобы цех поместился в окно с таким соотношением сторон.
+ * На широком экране ≈ 1, на планшете и телефоне (узкое окно) — больше: иначе цех обрезается по бокам.
+ */
+function overviewFit(fov: number, aspect: number): number {
+  const cam = new PerspectiveCamera(fov, aspect, 0.5, 1000)
+  const target = new Vector3(...OVERVIEW_VIEW.target)
+  const dir = new Vector3(...OVERVIEW_VIEW.position).sub(target)
+  const base = dir.length()
+  dir.normalize()
+  const corners = [0, 1, 2, 3, 4, 5, 6, 7].map(
+    (i) => new Vector3(i & 1 ? HALL_BOX.max.x : HALL_BOX.min.x, i & 2 ? HALL_BOX.max.y : HALL_BOX.min.y, i & 4 ? HALL_BOX.max.z : HALL_BOX.min.z),
+  )
+  const p = new Vector3()
+  const fits = (k: number) => {
+    cam.position.copy(target).addScaledVector(dir, base * k)
+    cam.lookAt(target)
+    cam.updateMatrixWorld()
+    return corners.every((c) => {
+      p.copy(c).project(cam)
+      return Math.abs(p.x) <= FIT_X && Math.abs(p.y) <= FIT_Y
+    })
+  }
+  let lo = 0.8
+  let hi = 4
+  if (fits(lo)) return lo
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2
+    if (fits(mid)) hi = mid
+    else lo = mid
+  }
+  return hi
+}
+
 function CameraRig({ view, nonce, smooth, isMobile, panelOpen }: { view: CameraView | null; nonce: number; smooth: boolean; isMobile: boolean; panelOpen: boolean }) {
   const ref = useRef<CameraControls>(null)
   const first = useRef(true)
+  const camera = useThree((s) => s.camera) as PerspectiveCamera
+  const scene = useThree((s) => s.scene)
+  const width = useThree((s) => s.size.width)
+  const height = useThree((s) => s.size.height)
+  const aspect = height > 0 ? width / height : 16 / 9
+  const rawFit = useMemo(() => overviewFit(camera.fov, aspect), [camera.fov, aspect])
+  // Перекадрируем только при заметной смене пропорций (поворот телефона, другое окно),
+  // а не при каждом пикселе — иначе камера сбрасывалась бы, пока человек осматривает цех.
+  const [fit, setFit] = useState(rawFit)
+  useEffect(() => {
+    setFit((prev) => (Math.abs(rawFit - prev) / prev > 0.12 ? rawFit : prev))
+  }, [rawFit])
+  const maxDistance = Math.max(95, new Vector3(...OVERVIEW_VIEW.position).distanceTo(new Vector3(...OVERVIEW_VIEW.target)) * fit * 1.25)
+
+  // Туман рассчитан на обычную дистанцию — при отодвинутой камере отодвигаем и его, иначе цех «тонет» в дымке.
+  useEffect(() => {
+    const fog = scene.fog
+    if (!(fog instanceof Fog)) return
+    const s = Math.max(1, fit)
+    fog.near = 110 * s
+    fog.far = 220 * s
+  }, [scene, fit])
 
   useEffect(() => {
     const c = ref.current
@@ -132,8 +199,9 @@ function CameraRig({ view, nonce, smooth, isMobile, panelOpen }: { view: CameraV
         if (ref.current) ref.current.smoothTime = 0.45
       }, 3200)
     }
-    // На телефоне нижний лист закрывает часть экрана — отодвигаем камеру и смещаем кадр вверх.
-    const k = isMobile ? 1.35 : 1
+    // Общий вид — подгоняем под размер окна. Для точек интереса на телефоне нижний лист закрывает
+    // часть экрана — отодвигаем камеру и смещаем кадр вверх.
+    const k = view ? (isMobile ? 1.35 : 1) : fit
     const [px, py, pz] = v.position
     const [tx, ty, tz] = v.target
     void c.setLookAt(tx + (px - tx) * k, ty + (py - ty) * k, tz + (pz - tz) * k, tx, ty, tz, animate)
@@ -146,14 +214,14 @@ function CameraRig({ view, nonce, smooth, isMobile, panelOpen }: { view: CameraV
       window.clearTimeout(restore)
       if (ref.current) ref.current.smoothTime = 0.45
     }
-  }, [view, nonce, smooth, isMobile, panelOpen])
+  }, [view, nonce, smooth, isMobile, panelOpen, fit])
 
   return (
     <CameraControls
       ref={ref}
       makeDefault
       minDistance={6}
-      maxDistance={95}
+      maxDistance={maxDistance}
       minPolarAngle={0.15}
       maxPolarAngle={Math.PI * 0.46}
       dollySpeed={0.7}

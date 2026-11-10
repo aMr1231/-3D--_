@@ -243,9 +243,16 @@
   }
 }
 
-/* React Flow: приглушаем стандартный вид под дизайн-систему */
+/* React Flow: приглушаем стандартный вид под дизайн-систему.
+   Ссылку на библиотеку оставляем (об этом просят её авторы), но делаем незаметной. */
 .react-flow__attribution {
-  display: none;
+  background: transparent !important;
+  padding: 2px 6px !important;
+  font-size: 12px;
+}
+.react-flow__attribution a {
+  color: var(--color-faint) !important;
+  font-size: 12px;
 }
 .react-flow__controls {
   box-shadow: none !important;

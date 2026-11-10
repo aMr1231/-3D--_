@@ -12,6 +12,10 @@ export function QueueProfileChart({ result, highlight }: { result: SimulationRes
   const data = queueProfile(result, 1)
   // Показываем участки с заметной очередью; цвет закреплён за участком.
   const visible = STAGES.filter((s) => Math.max(...data.map((p) => p[s.id])) >= 0.5)
+  // Ровная шкала часов (через 2 или 4 ч) — помещается и на телефоне.
+  const lastHour = data[data.length - 1]?.hour ?? 0
+  const step = lastHour > 12 ? 4 : 2
+  const hourTicks = Array.from({ length: Math.floor(lastHour / step) + 1 }, (_, i) => i * step)
 
   return (
     <ChartFrame
@@ -22,7 +26,7 @@ export function QueueProfileChart({ result, highlight }: { result: SimulationRes
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
               <CartesianGrid vertical={false} stroke={CHART.grid} />
-              <XAxis dataKey="hour" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} ч`} interval={1} />
+              <XAxis dataKey="hour" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} ч`} ticks={hourTicks} interval={0} />
               <YAxis tick={AXIS_TICK} tickLine={false} axisLine={false} width={44} allowDecimals={false} />
               <Tooltip
                 cursor={{ stroke: CHART.axis }}

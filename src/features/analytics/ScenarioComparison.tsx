@@ -23,7 +23,7 @@ export function ScenarioComparison({ scenarios, selectedId }: { scenarios: Scena
       flush
     >
       <div className="scrollbar-thin overflow-x-auto pb-2">
-        <table className="w-full text-meta" style={{ minWidth: 220 + columns.length * 150 }}>
+        <table className="w-full text-meta" style={{ minWidth: 220 + columns.length * 130 }}>
           <caption className="sr-only">Показатели сохранённых сценариев</caption>
           <thead>
             <tr className="border-b border-line text-xs text-muted">
@@ -32,10 +32,11 @@ export function ScenarioComparison({ scenarios, selectedId }: { scenarios: Scena
                 <th
                   key={scenario.id}
                   scope="col"
-                  className={clsx('px-3 py-3 text-right align-bottom font-medium', scenario.id === selectedId && 'bg-accent-soft text-ink')}
+                  className={clsx('px-3 py-3 text-right align-bottom font-medium text-balance', scenario.id === selectedId && 'bg-accent-soft text-ink')}
                 >
                   <Link to={`/scenarios?id=${scenario.id}`} className="hover:text-accent">
-                    {scenario.name}
+                    {/* «+15 %» не разрывается: знак процента не уходит на отдельную строку */}
+                    {scenario.name.replace(/ (?=[%₽])/g, ' ')}
                   </Link>
                 </th>
               ))}

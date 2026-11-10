@@ -179,7 +179,7 @@ export function ProcessFlow({ result, layer, selectedStageId, onSelect }: Proces
         if (node.type === 'stage') onSelect(node.id)
       }}
       onPaneClick={() => onSelect(null)}
-      proOptions={{ hideAttribution: true }}
+      attributionPosition="bottom-left"
       aria-label="Мнемосхема производственной линии"
     >
       <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="#dcdce1" bgColor="#f7f7f8" />

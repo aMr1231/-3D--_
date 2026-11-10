@@ -108,7 +108,7 @@ export function UtilizationChart({ result, highlight }: StageChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} layout="vertical" margin={{ top: 4, right: 36, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
-              <XAxis type="number" domain={[0, 1]} ticks={[0, 0.25, 0.5, 0.75, 1]} tickFormatter={(v: number) => formatPercent(v)} tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} />
+              <XAxis type="number" domain={[0, 1]} ticks={[0, 0.25, 0.5, 0.75, 1]} tickFormatter={(v: number) => formatPercent(v)} tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} minTickGap={10} />
               <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={116} />
               <ReferenceLine x={0.85} stroke={CHART.warn} strokeDasharray="3 3" />
               <ReferenceLine x={0.95} stroke={CHART.crit} strokeDasharray="3 3" />
@@ -179,9 +179,9 @@ export function CycleBreakdownChart({ result, highlight }: StageChartProps) {
       chart={
         <div className="h-[240px]">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} layout="vertical" margin={{ top: 4, right: 12, left: 0, bottom: 0 }} barCategoryGap="30%">
+            <BarChart data={data} layout="vertical" margin={{ top: 4, right: 28, left: 0, bottom: 0 }} barCategoryGap="30%">
               <CartesianGrid horizontal={false} stroke={CHART.grid} />
-              <XAxis type="number" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} мин`} />
+              <XAxis type="number" tick={AXIS_TICK} tickLine={false} axisLine={{ stroke: CHART.axis }} tickFormatter={(v: number) => `${v} мин`} minTickGap={16} />
               <YAxis type="category" dataKey="name" tick={AXIS_TICK} tickLine={false} axisLine={false} width={116} />
               <Tooltip
                 cursor={{ fill: 'rgb(16 24 32 / 0.04)' }}

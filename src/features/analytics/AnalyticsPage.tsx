@@ -135,12 +135,13 @@ export default function AnalyticsPage() {
 
       <SensitivityTable result={result} highlight={highlight} scenarioId={scenario.id} />
 
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <ScenarioComparison scenarios={scenarios} selectedId={scenario.id} />
-        <CostStructure result={result} highlight={highlight} />
-      </div>
+      {/* Сравнение — во всю ширину, чтобы все сценарии помещались без прокрутки */}
+      <ScenarioComparison scenarios={scenarios} selectedId={scenario.id} />
 
-      <RecentRuns />
+      <div className="grid items-start gap-6 xl:grid-cols-2">
+        <CostStructure result={result} highlight={highlight} />
+        <RecentRuns />
+      </div>
       <AnalyticsInfo result={result} scenarioName={scenario.name} scenarioCount={scenarios.length} />
     </Page>
   )

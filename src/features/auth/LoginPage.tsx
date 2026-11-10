@@ -124,7 +124,11 @@ export default function LoginPage() {
           <div className="flex flex-col items-center text-center">
             <BrandMark className="size-12" tone="light" />
             <h1 className="mt-6 text-title font-semibold text-ink">{mode === 'login' ? `Вход в ${APP.name}` : 'Регистрация'}</h1>
-            <p className="mt-2 text-sm text-muted">Цифровой двойник производства · {ENTERPRISE.name}</p>
+            {/* Части не разрываются: на телефоне строка переносится по «·», а не посреди «Демо-завода» */}
+            <p className="mt-2 text-sm text-muted">
+              <span className="whitespace-nowrap">Цифровой двойник производства</span> ·{' '}
+              <span className="whitespace-nowrap">{ENTERPRISE.name}</span>
+            </p>
           </div>
 
           <div className="mt-8 rounded-2xl border border-line bg-surface p-6 sm:p-8">
